@@ -992,3 +992,116 @@ html, body, #root {
 
 .login-footer { color: #7f90b8; border-top-color: rgb(120 150 255 / 20%); }
 .login-loading { color: #c5d2f0; }
+
+
+/* ==========================================================
+   Tema escuro em todo o sistema
+   ========================================================== */
+:root {
+  color-scheme: dark;
+  --ink: #e8eeff;
+  --ink-soft: #a3b2d6;
+  --line: rgb(120 150 255 / 22%);
+  --canvas: #0b1530;
+  --surface: rgb(21 35 75 / 82%);
+  --blue-50: rgb(79 125 255 / 18%);
+  --blue-700: #9db8ff;
+  --muted: #a3b2d6;
+  --border: rgb(120 150 255 / 22%);
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+html, #root { background: transparent; }
+
+body {
+  background-color: #0b1530;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgb(47 107 255 / 32%) 0, transparent 40%),
+    radial-gradient(circle at 92% 92%, rgb(110 70 255 / 28%) 0, transparent 42%),
+    linear-gradient(rgb(255 255 255 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 4%) 1px, transparent 1px);
+  background-size: auto, auto, 32px 32px, 32px 32px;
+  background-attachment: fixed;
+  color: var(--ink);
+}
+
+/* Menu lateral e topo */
+.sidebar { background: #0e1a3a; border-right: 1px solid var(--line); box-shadow: none; }
+.sidebar-brand h1 { color: #fff; }
+.nav-caption, .sidebar-footer { color: #7f90b8; }
+.nav-item { color: var(--ink-soft); }
+.nav-item:hover { background: rgb(255 255 255 / 6%); color: #fff; }
+.nav-item.active {
+  background: linear-gradient(135deg, rgb(47 107 255 / 30%), rgb(91 75 255 / 26%));
+  color: #fff;
+}
+.login-user-area { border-top-color: var(--line); }
+.login-user-avatar { background: var(--blue-50); color: #bcd0ff; }
+.logout-button { color: #ff9aa2; background: rgb(220 70 70 / 12%); border-color: rgb(220 70 70 / 35%); }
+.logout-button:hover { background: rgb(220 70 70 / 20%); }
+
+.topbar { background: rgb(14 26 58 / 85%); border-bottom: 1px solid var(--line); }
+.topbar h2 { color: #fff; }
+
+/* Dashboard */
+.welcome-card { border: 1px solid rgb(120 150 255 / 30%); }
+.feature-card {
+  background: var(--surface);
+  border-color: var(--line);
+  box-shadow: 0 6px 22px rgb(0 0 0 / 22%);
+  backdrop-filter: blur(8px);
+}
+.feature-card h3 { color: #fff; }
+.feature-icon.blue   { color: #8fb0ff; background: rgb(79 125 255 / 20%); }
+.feature-icon.purple { color: #c0a8ff; background: rgb(140 100 255 / 20%); }
+.feature-icon.green  { color: #5fe0b4; background: rgb(40 190 140 / 18%); }
+.feature-icon.orange { color: #ffc46b; background: rgb(240 170 60 / 18%); }
+
+/* Folha de pagamento */
+.gestao-folha { color: var(--ink); }
+.gf-header h2, .gf-panel-heading h3 { color: #fff; }
+.gf-header p, .gf-panel-heading p, .gf-help, .gf-selected-status { color: var(--ink-soft); }
+.gf-eyebrow { color: #8fb0ff; }
+
+.gf-panel, .gf-summary-card {
+  background: var(--surface);
+  border-color: var(--line);
+  box-shadow: 0 6px 22px rgb(0 0 0 / 22%);
+  backdrop-filter: blur(8px);
+}
+.gf-summary-card span { color: var(--ink-soft); }
+.gf-summary-card strong { color: #fff; }
+.gf-summary-card > svg, .gf-panel-heading > svg, .gf-selected-status svg { color: #7fa2ff; }
+
+.gf-label { color: #d5def2; }
+.gf-input {
+  color: #fff;
+  background: rgb(8 16 38 / 70%);
+  border-color: rgb(120 150 255 / 28%);
+}
+.gf-input:focus {
+  border-color: #4f7dff;
+  box-shadow: 0 0 0 3px rgb(79 125 255 / 28%), 0 0 18px rgb(79 125 255 / 22%);
+}
+.gf-input:disabled { background: rgb(8 16 38 / 45%); color: #7f90b8; }
+.gf-input option { background: #0e1a3a; color: #fff; }
+
+.gf-button-primary:disabled { opacity: .45; }
+.gf-button-secondary { color: #b4c8ff; background: rgb(79 125 255 / 14%); border-color: rgb(120 150 255 / 40%); }
+.gf-button-secondary:not(:disabled):hover { background: rgb(79 125 255 / 24%); border-color: #6f95ff; }
+.gf-button-danger { color: #ff9aa2; background: rgb(220 70 70 / 12%); border-color: rgb(220 70 70 / 38%); }
+.gf-button-danger:not(:disabled):hover { background: rgb(220 70 70 / 22%); }
+
+.gf-error { color: #ffb4b4; background: rgb(220 70 70 / 14%); border-color: rgb(220 70 70 / 40%); }
+.gf-success { color: #7ee8b9; background: rgb(40 190 140 / 14%); border-color: rgb(40 190 140 / 40%); }
+
+.gf-table th { color: #9fb0d6; background: rgb(255 255 255 / 5%); border-bottom-color: var(--line); }
+.gf-table td { color: #c3cfeb; border-bottom-color: rgb(120 150 255 / 14%); }
+.gf-table td strong { color: #fff; }
+.gf-table tbody tr:hover td { background: rgb(255 255 255 / 4%); }
+.gf-table tfoot td { color: #fff; background: rgb(255 255 255 / 7%); border-top-color: var(--line); }
+.gf-subtitle { color: #8fa2cc; }
+.gf-table .gf-net-value { color: #5fe0b4; }
+.gf-empty { color: #8fa2cc !important; }
+.gf-calculation-status { color: #5fe0b4; background: rgb(40 190 140 / 16%); }

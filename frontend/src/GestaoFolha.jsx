@@ -423,7 +423,7 @@ function GestaoFolha() {
   );
 
   return (
-    <div className="gestao-folhas">
+    <div className="gestao-folha">
       <header className="gf-header">
         <div>
           <span className="gf-eyebrow">
