@@ -1,0 +1,396 @@
+
+.gestao-folha {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  color: #172b4d;
+}
+
+.gf-header,
+.gf-panel-heading,
+.gf-items-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.gf-header h2 {
+  margin: 7px 0;
+  font-size: clamp(23px, 3vw, 30px);
+}
+
+.gf-header p,
+.gf-panel-heading p {
+  margin: 0;
+  color: #7b879d;
+  font-size: 13px;
+}
+
+.gf-eyebrow {
+  color: #5374dc;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.gf-panel {
+  padding: 24px;
+  border: 1px solid #e8edf5;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgb(30 50 90 / 3%);
+}
+
+.gf-panel-heading {
+  margin-bottom: 20px;
+}
+
+.gf-panel-heading h3 {
+  margin: 0 0 6px;
+  font-size: 17px;
+}
+
+.gf-panel-heading > svg {
+  color: #4169e1;
+  flex-shrink: 0;
+}
+
+.gf-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #42516a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.gf-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #dce3ef;
+  border-radius: 9px;
+  background: #fff;
+  color: #172b4d;
+  font: inherit;
+  font-size: 13px;
+}
+
+.gf-input:focus {
+  border-color: #4169e1;
+  outline: 3px solid rgb(65 105 225 / 12%);
+}
+
+.gf-input:disabled {
+  background: #f6f8fc;
+  cursor: not-allowed;
+}
+
+.gf-selected-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  color: #617089;
+  font-size: 12px;
+}
+
+.gf-selected-status svg {
+  color: #4169e1;
+}
+
+.gf-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.gf-summary-card {
+  position: relative;
+  min-width: 0;
+  padding: 19px;
+  border: 1px solid #e8edf5;
+  border-radius: 13px;
+  background: #fff;
+}
+
+.gf-summary-card span {
+  display: block;
+  padding-right: 25px;
+  color: #77849a;
+  font-size: 12px;
+}
+
+.gf-summary-card strong {
+  display: block;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+  font-size: clamp(17px, 2vw, 23px);
+}
+
+.gf-summary-card > svg {
+  position: absolute;
+  top: 18px;
+  right: 17px;
+  color: #4169e1;
+}
+
+.gf-add-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.gf-form-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.gf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.gf-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.gf-button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.gf-button-primary {
+  background: #3867e8;
+  color: white;
+}
+
+.gf-button-primary:not(:disabled):hover {
+  background: #2854cc;
+}
+
+.gf-button-secondary {
+  border: 1px solid #e0e6f0;
+  background: #fff;
+  color: #344765;
+}
+
+.gf-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.gf-error {
+  border: 1px solid #f4d3d3;
+  background: #fff5f5;
+  color: #a52d2d;
+}
+
+.gf-success {
+  border: 1px solid #ccebdc;
+  background: #f0fbf5;
+  color: #18794e;
+}
+
+.gf-message svg {
+  flex-shrink: 0;
+}
+
+.gf-help {
+  margin: 15px 0 0;
+  color: #77849a;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.gf-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.gf-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.gf-table th {
+  padding: 13px 12px;
+  border-bottom: 1px solid #e8edf5;
+  color: #8b96aa;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.gf-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #edf0f6;
+  color: #52617a;
+  font-size: 12px;
+}
+
+.gf-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.gf-table td strong {
+  display: block;
+  color: #243653;
+  font-size: 12px;
+}
+
+.gf-subtitle {
+  display: block;
+  margin-top: 5px;
+  color: #8995aa;
+  font-size: 11px;
+}
+
+.gf-table .gf-net-value {
+  color: #16794c;
+  font-weight: 800;
+}
+
+.gf-table tfoot td {
+  border-top: 1px solid #e1e7f0;
+  background: #f8faff;
+  color: #263954;
+  font-weight: 800;
+}
+
+.gf-empty {
+  padding: 28px 12px !important;
+  text-align: center;
+  color: #8591a5 !important;
+}
+
+@media (max-width: 1000px) {
+  .gf-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .gf-header,
+  .gf-items-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .gf-header .gf-button,
+  .gf-items-heading .gf-button {
+    width: 100%;
+  }
+
+  .gf-panel {
+    padding: 17px;
+  }
+
+  .gf-add-form {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gf-summary-card {
+    padding: 15px;
+  }
+
+  .gf-summary-card > svg {
+    top: 14px;
+    right: 12px;
+  }
+
+.gf-calculation-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #edf8f1;
+  color: #18794e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+}
+
+
+.gf-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.gf-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.gf-button-small {
+  min-height: 34px;
+  padding: 7px 9px;
+  font-size: 11px;
+}
+
+.gf-button-danger {
+  background: #fff1f1;
+  color: #a52d2d;
+  border: 1px solid #f1cccc;
+}
+
+.gf-button-danger:not(:disabled):hover {
+  background: #ffe3e3;
+}
+
+.gf-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.gf-edit-field {
+  min-width: 0;
+}
+
+.gf-edit-field .gf-input {
+  box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .gf-toolbar-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .gf-toolbar-actions .gf-button {
+    flex: 1;
+  }
+
+  .gf-edit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .gf-edit-grid {
+    grid-template-columns: 1fr;
+  }
+}

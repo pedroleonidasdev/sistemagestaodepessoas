@@ -1,0 +1,51 @@
+# Segredos e variáveis de ambiente
+.env
+.env.*
+!.env.example
+!.env.sample
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.sample
+
+# Dependências e builds
+**/node_modules/
+**/target/
+**/dist/
+**/build/
+
+# IDEs e sistema
+.idea/
+.vscode/
+**/.idea/
+**/.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs e temporários
+*.log
+*.tmp
+*.bak
+*.backup
+*.old
+
+# Bancos de dados e dumps
+*.sql
+*.sql.gz
+*.dump
+*.sqlite
+*.sqlite3
+*.db
+
+# Certificados e chaves privadas
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Relatórios locais
+*.pdf
+
+# Outros armazenamentos de chaves e certificados
+*.jks
+*.keystore
