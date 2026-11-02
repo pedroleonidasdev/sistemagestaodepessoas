@@ -122,7 +122,7 @@ public class EmpresaService {
             );
         }
 
-        if (!cnpj.matches("(\\d)\\1{13}") && !cnpjValido(cnpj)) {
+        if (cnpj.matches("(\\d)\\1{13}") || !cnpjValido(cnpj)) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "O CNPJ informado é inválido."

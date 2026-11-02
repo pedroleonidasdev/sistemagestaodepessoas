@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   listarFolha,
   listarFuncionarios,
@@ -13,6 +13,9 @@ import {
   fecharFolha,
   baixarHolerite,
   baixarRelatorioFolha,
+  obterEmpresaId,
+  criarFolha,
+  cadastrarFuncionario,
 } from "./services/api";
 
 import {
@@ -31,11 +34,25 @@ import {
   LockKeyhole,
   X,
   Save,
+  CalendarPlus,
+  UserPlus,
 } from "lucide-react";
 
 import "./GestaoFolha.css";
 
-const EMPRESA_ID = 1;
+const FORM_FUNCIONARIO_VAZIO = {
+  matricula: "",
+  nomeCompleto: "",
+  cpf: "",
+  salarioBase: "",
+  dataAdmissao: "",
+};
+
+function hojeISO() {
+  const data = new Date();
+  data.setMinutes(data.getMinutes() - data.getTimezoneOffset());
+  return data.toISOString().slice(0, 10);
+}
 
 function numero(valor) {
   if (typeof valor === "number") {
@@ -97,6 +114,14 @@ function GestaoFolha() {
   const [mensagem, setMensagem] = useState("");
   const [itemEditando, setItemEditando] = useState(null);
   const [formEdicao, setFormEdicao] = useState({});
+  const [competenciaNova, setCompetenciaNova] = useState(
+    () => hojeISO().slice(0, 7)
+  );
+  const [mostrarFormFuncionario, setMostrarFormFuncionario] = useState(false);
+  const [formFuncionario, setFormFuncionario] = useState(
+    FORM_FUNCIONARIO_VAZIO
+  );
+  const empresaIdRef = useRef(null);
 
 
   const folhaSelecionada = useMemo(
@@ -110,12 +135,12 @@ function GestaoFolha() {
     statusFolha(folhaSelecionada?.status) === "ABERTA";
 
   const carregarFolhas = useCallback(async () => {
-    const dados = await listarFolha(EMPRESA_ID);
+    const dados = await listarFolha(empresaIdRef.current);
     return Array.isArray(dados) ? dados : [];
   }, []);
 
   const carregarFuncionarios = useCallback(async () => {
-    const dados = await listarFuncionarios(EMPRESA_ID);
+    const dados = await listarFuncionarios(empresaIdRef.current);
     setFuncionarios(Array.isArray(dados) ? dados : []);
   }, []);
 
@@ -125,7 +150,7 @@ function GestaoFolha() {
       return;
     }
 
-    const dados = await listarItensFolha(id, EMPRESA_ID);
+    const dados = await listarItensFolha(id, empresaIdRef.current);
     setItens(Array.isArray(dados) ? dados : []);
   }, []);
 
@@ -135,6 +160,8 @@ function GestaoFolha() {
     setMensagem("");
 
     try {
+      empresaIdRef.current = await obterEmpresaId();
+
       const [listaFolhas] = await Promise.all([
         carregarFolhas(),
         carregarFuncionarios(),
@@ -197,6 +224,99 @@ function GestaoFolha() {
     }
   }
 
+  async function abrirNovaFolha(event) {
+    event.preventDefault();
+    setErro("");
+    setMensagem("");
+
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(competenciaNova)) {
+      setErro("Escolha o mês e o ano da folha.");
+      return;
+    }
+
+    setProcessando(true);
+
+    try {
+      const nova = await criarFolha(competenciaNova, empresaIdRef.current);
+      const lista = await carregarFolhas();
+      setFolhas(lista);
+
+      const novoId = String(
+        nova?.id ??
+          lista.find((folha) => folha.competencia === competenciaNova)?.id ??
+          ""
+      );
+
+      setFolhaId(novoId);
+      await carregarItens(novoId);
+      setMensagem(
+        `Folha de ${competenciaLegivel(competenciaNova)} aberta com sucesso.`
+      );
+    } catch (error) {
+      setErro(error.message || "Não foi possível abrir a folha.");
+    } finally {
+      setProcessando(false);
+    }
+  }
+
+  function alterarCampoFuncionario(campo, valor) {
+    setFormFuncionario((atual) => ({ ...atual, [campo]: valor }));
+  }
+
+  async function cadastrarNovoFuncionario(event) {
+    event.preventDefault();
+    setErro("");
+    setMensagem("");
+
+    const dados = {
+      matricula: formFuncionario.matricula.trim(),
+      nomeCompleto: formFuncionario.nomeCompleto.trim(),
+      cpf: formFuncionario.cpf.replace(/\D/g, ""),
+      salarioBase: String(formFuncionario.salarioBase).replace(",", "."),
+      dataAdmissao: formFuncionario.dataAdmissao,
+    };
+
+    if (!dados.matricula || !dados.nomeCompleto) {
+      setErro("Informe a matrícula e o nome completo.");
+      return;
+    }
+
+    if (dados.cpf.length !== 11) {
+      setErro("O CPF deve ter 11 números.");
+      return;
+    }
+
+    if (
+      dados.salarioBase === "" ||
+      !Number.isFinite(Number(dados.salarioBase)) ||
+      Number(dados.salarioBase) < 0
+    ) {
+      setErro("Informe um salário base igual ou maior que zero.");
+      return;
+    }
+
+    if (!dados.dataAdmissao || dados.dataAdmissao > hojeISO()) {
+      setErro("Informe uma data de admissão que não seja futura.");
+      return;
+    }
+
+    setProcessando(true);
+
+    try {
+      await cadastrarFuncionario(dados, empresaIdRef.current);
+      await carregarFuncionarios();
+      setFormFuncionario(FORM_FUNCIONARIO_VAZIO);
+      setMostrarFormFuncionario(false);
+      setMensagem(
+        `${dados.nomeCompleto} foi cadastrado e já pode entrar na folha.`
+      );
+    } catch (error) {
+      setErro(error.message || "Não foi possível cadastrar o funcionário.");
+    } finally {
+      setProcessando(false);
+    }
+  }
+
   async function adicionarFuncionario(event) {
     event.preventDefault();
     setErro("");
@@ -230,7 +350,7 @@ function GestaoFolha() {
       await adicionarFuncionarioFolha(
         folhaSelecionada.id,
         funcionarioId,
-        EMPRESA_ID
+        empresaIdRef.current
       );
 
       await carregarItens(folhaSelecionada.id);
@@ -263,7 +383,7 @@ function GestaoFolha() {
     setProcessando(true);
 
     try {
-      await calcularFolha(folhaSelecionada.id, EMPRESA_ID);
+      await calcularFolha(folhaSelecionada.id, empresaIdRef.current);
 
       await carregarItens(folhaSelecionada.id);
 
@@ -320,7 +440,7 @@ function GestaoFolha() {
             Number(valor),
           ])
         ),
-        EMPRESA_ID
+        empresaIdRef.current
       );
       await carregarItens(folhaSelecionada.id);
       setItemEditando(null);
@@ -343,7 +463,7 @@ function GestaoFolha() {
     setMensagem("");
 
     try {
-      await excluirItemFolha(folhaSelecionada.id, item.id, EMPRESA_ID);
+      await excluirItemFolha(folhaSelecionada.id, item.id, empresaIdRef.current);
       await carregarItens(folhaSelecionada.id);
       setMensagem("Funcionário removido da folha.");
     } catch (error) {
@@ -366,7 +486,7 @@ function GestaoFolha() {
     setMensagem("");
 
     try {
-      await fecharFolha(folhaSelecionada.id, EMPRESA_ID);
+      await fecharFolha(folhaSelecionada.id, empresaIdRef.current);
       await atualizarDados();
       setMensagem("Folha fechada com sucesso.");
     } catch (error) {
@@ -513,6 +633,45 @@ function GestaoFolha() {
         )}
       </section>
 
+      <section className="gf-panel">
+        <div className="gf-panel-heading">
+          <div>
+            <h3>Abrir nova folha</h3>
+            <p>Escolha o mês e o ano da competência.</p>
+          </div>
+
+          <CalendarPlus size={23} />
+        </div>
+
+        <form className="gf-add-form" onSubmit={abrirNovaFolha}>
+          <div className="gf-form-field">
+            <label className="gf-label" htmlFor="gf-competencia">
+              Mês e ano
+            </label>
+
+            <input
+              id="gf-competencia"
+              type="month"
+              className="gf-input"
+              placeholder="AAAA-MM"
+              value={competenciaNova}
+              onChange={(event) => setCompetenciaNova(event.target.value)}
+              disabled={carregando || processando}
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="gf-button gf-button-primary"
+            disabled={carregando || processando}
+          >
+            <Plus size={17} />
+            Abrir folha
+          </button>
+        </form>
+      </section>
+
       <section className="gf-summary">
         <article className="gf-summary-card">
           <span>Funcionários na folha</span>
@@ -543,6 +702,136 @@ function GestaoFolha() {
           </strong>
           <CheckCircle2 size={21} />
         </article>
+      </section>
+
+      <section className="gf-panel">
+        <div className="gf-panel-heading">
+          <div>
+            <h3>Cadastrar funcionário</h3>
+            <p>
+              O funcionário nasce ativo e já pode ser incluído na folha.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="gf-button gf-button-secondary"
+            onClick={() => setMostrarFormFuncionario((aberto) => !aberto)}
+            disabled={carregando || processando}
+          >
+            {mostrarFormFuncionario ? (
+              <X size={17} />
+            ) : (
+              <UserPlus size={17} />
+            )}
+            {mostrarFormFuncionario ? "Fechar" : "Novo funcionário"}
+          </button>
+        </div>
+
+        {mostrarFormFuncionario && (
+          <form onSubmit={cadastrarNovoFuncionario}>
+            <div className="gf-form-grid">
+              <div className="gf-form-field">
+                <label className="gf-label" htmlFor="gf-matricula">
+                  Matrícula
+                </label>
+                <input
+                  id="gf-matricula"
+                  className="gf-input"
+                  value={formFuncionario.matricula}
+                  onChange={(event) =>
+                    alterarCampoFuncionario("matricula", event.target.value)
+                  }
+                  maxLength={30}
+                  disabled={processando}
+                  required
+                />
+              </div>
+
+              <div className="gf-form-field gf-span-2">
+                <label className="gf-label" htmlFor="gf-nome">
+                  Nome completo
+                </label>
+                <input
+                  id="gf-nome"
+                  className="gf-input"
+                  value={formFuncionario.nomeCompleto}
+                  onChange={(event) =>
+                    alterarCampoFuncionario("nomeCompleto", event.target.value)
+                  }
+                  maxLength={200}
+                  disabled={processando}
+                  required
+                />
+              </div>
+
+              <div className="gf-form-field">
+                <label className="gf-label" htmlFor="gf-cpf">
+                  CPF
+                </label>
+                <input
+                  id="gf-cpf"
+                  className="gf-input"
+                  inputMode="numeric"
+                  placeholder="000.000.000-00"
+                  value={formFuncionario.cpf}
+                  onChange={(event) =>
+                    alterarCampoFuncionario("cpf", event.target.value)
+                  }
+                  maxLength={14}
+                  disabled={processando}
+                  required
+                />
+              </div>
+
+              <div className="gf-form-field">
+                <label className="gf-label" htmlFor="gf-salario">
+                  Salário base (R$)
+                </label>
+                <input
+                  id="gf-salario"
+                  className="gf-input"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formFuncionario.salarioBase}
+                  onChange={(event) =>
+                    alterarCampoFuncionario("salarioBase", event.target.value)
+                  }
+                  disabled={processando}
+                  required
+                />
+              </div>
+
+              <div className="gf-form-field">
+                <label className="gf-label" htmlFor="gf-admissao">
+                  Data de admissão
+                </label>
+                <input
+                  id="gf-admissao"
+                  className="gf-input"
+                  type="date"
+                  max={hojeISO()}
+                  value={formFuncionario.dataAdmissao}
+                  onChange={(event) =>
+                    alterarCampoFuncionario("dataAdmissao", event.target.value)
+                  }
+                  disabled={processando}
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="gf-button gf-button-primary"
+              disabled={processando}
+            >
+              <Save size={17} />
+              Cadastrar funcionário
+            </button>
+          </form>
+        )}
       </section>
 
       <section className="gf-panel">
@@ -650,7 +939,7 @@ function GestaoFolha() {
                 type="button"
                 className="gf-button gf-button-secondary"
                 onClick={() => baixarArquivo(
-                  () => baixarRelatorioFolha(folhaSelecionada.id, EMPRESA_ID),
+                  () => baixarRelatorioFolha(folhaSelecionada.id, empresaIdRef.current),
                   "Relatório PDF"
                 )}
                 disabled={carregando || processando}
@@ -763,7 +1052,7 @@ function GestaoFolha() {
                           type="button"
                           className="gf-button gf-button-secondary gf-button-small"
                           onClick={() => baixarArquivo(
-                            () => baixarHolerite(folhaSelecionada.id, item.id, EMPRESA_ID),
+                            () => baixarHolerite(folhaSelecionada.id, item.id, empresaIdRef.current),
                             "Holerite PDF"
                           )}
                           disabled={processando || !folhaSelecionada}

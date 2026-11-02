@@ -1,4 +1,5 @@
 let csrfToken = null;
+let empresaAtualId = null;
 
 const SAFE_METHODS = ["GET", "HEAD", "OPTIONS", "TRACE"];
 
@@ -142,6 +143,7 @@ export async function logout() {
   });
 
   limparTokenCsrf();
+  empresaAtualId = null;
   return result;
 }
 
@@ -328,4 +330,43 @@ export function baixarRelatorioFolha(folhaId, empresaId = 1) {
     `/api/empresas/${empresaId}/folhas-pagamento/${folhaId}/relatorio.pdf`,
     `relatorio-folha-${folhaId}.pdf`
   );
+}
+
+/**
+ * Descobre a empresa usada pelo sistema: a primeira empresa ativa cadastrada.
+ */
+export async function obterEmpresaId() {
+  if (empresaAtualId) {
+    return empresaAtualId;
+  }
+
+  const empresas = await apiFetch("/api/empresas");
+  const lista = Array.isArray(empresas) ? empresas : [];
+  const empresa = lista.find((item) => item.ativo !== false) ?? lista[0];
+
+  if (!empresa) {
+    throw new Error(
+      "Nenhuma empresa cadastrada. Cadastre uma empresa para continuar."
+    );
+  }
+
+  empresaAtualId = empresa.id;
+  return empresaAtualId;
+}
+
+/**
+ * Cadastra um funcionário ativo na empresa.
+ */
+export function cadastrarFuncionario(dados, empresaId = 1) {
+  return apiFetch(`/api/empresas/${empresaId}/funcionarios`, {
+    method: "POST",
+    body: JSON.stringify({
+      matricula: dados.matricula,
+      nomeCompleto: dados.nomeCompleto,
+      cpf: dados.cpf,
+      salarioBase: Number(dados.salarioBase),
+      dataAdmissao: dados.dataAdmissao,
+      situacao: "ATIVO",
+    }),
+  });
 }

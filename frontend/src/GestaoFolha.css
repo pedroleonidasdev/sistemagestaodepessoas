@@ -432,3 +432,32 @@
 .gf-input { border-color: #c4d2ea; }
 .gf-input:focus { border-color: #2f6bff; }
 .gf-summary-card > svg, .gf-panel-heading > svg { color: #3f5eff; }
+
+
+/* Formulário de funcionário */
+.gf-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.gf-span-2 {
+  grid-column: span 2;
+}
+
+@media (max-width: 700px) {
+  .gf-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .gf-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gf-span-2 {
+    grid-column: auto;
+  }
+}

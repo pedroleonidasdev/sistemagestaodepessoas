@@ -4,9 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,7 +21,10 @@ public class GlobalExceptionHandler {
                 "timestamp", LocalDateTime.now(),
                 "status", 400,
                 "erro", "Requisição inválida",
-                "mensagem", ex.getMessage()
+                "mensagem", Objects.requireNonNullElse(
+                        ex.getMessage(),
+                        "Operação inválida."
+                )
         ));
     }
 
@@ -31,7 +36,30 @@ public class GlobalExceptionHandler {
                 "timestamp", LocalDateTime.now(),
                 "status", 409,
                 "erro", "Operação não permitida",
-                "mensagem", ex.getMessage()
+                "mensagem", Objects.requireNonNullElse(
+                        ex.getMessage(),
+                        "Operação inválida."
+                )
+        ));
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, Object>> tratarResponseStatus(
+            ResponseStatusException ex) {
+
+        int codigo = ex.getStatusCode().value();
+        HttpStatus status = HttpStatus.resolve(codigo);
+
+        return ResponseEntity.status(ex.getStatusCode()).body(Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", codigo,
+                "erro", status != null
+                        ? status.getReasonPhrase()
+                        : "Erro",
+                "mensagem", Objects.requireNonNullElse(
+                        ex.getReason(),
+                        "Não foi possível concluir a operação."
+                )
         ));
     }
 
@@ -43,7 +71,10 @@ public class GlobalExceptionHandler {
                 "timestamp", LocalDateTime.now(),
                 "status", 500,
                 "erro", "Erro interno",
-                "mensagem", ex.getMessage()
+                "mensagem", Objects.requireNonNullElse(
+                        ex.getMessage(),
+                        "Ocorreu um erro inesperado."
+                )
         ));
     }
 }
