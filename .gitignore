@@ -31,6 +31,7 @@ Thumbs.db
 
 # Bancos de dados e dumps
 *.sql
+!backend/src/main/resources/db/migration/*.sql
 *.sql.gz
 *.dump
 *.sqlite
