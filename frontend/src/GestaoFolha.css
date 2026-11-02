@@ -424,3 +424,11 @@
 
 @media (max-width: 1200px) { .gestao-folha { padding: 24px 26px 34px; } }
 @media (max-width: 560px) { .gestao-folha { padding: 18px 14px 28px; } }
+
+/* Tema azul-tecnologia */
+.gf-panel, .gf-summary-card { border-color: #c9d6ec; box-shadow: 0 4px 16px rgb(36 60 120 / 8%); }
+.gf-table th, .gf-table tfoot td { background: #eef3fc; }
+.gf-table tbody tr:hover td { background: #f3f7ff; }
+.gf-input { border-color: #c4d2ea; }
+.gf-input:focus { border-color: #2f6bff; }
+.gf-summary-card > svg, .gf-panel-heading > svg { color: #3f5eff; }

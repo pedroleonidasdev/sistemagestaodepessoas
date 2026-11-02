@@ -828,3 +828,105 @@ select:focus-visible {
   .welcome-card { padding: 26px 22px; }
   .feature-grid { grid-template-columns: 1fr; }
 }
+
+
+/* ==========================================================
+   Tema azul-tecnologia: fundo colorido e botões com brilho
+   ========================================================== */
+:root {
+  --canvas: #d9e3f5;
+  --line: #c9d6ec;
+  --btn-grad: linear-gradient(135deg, #2f6bff 0%, #5b4bff 100%);
+  --btn-grad-hover: linear-gradient(135deg, #4a7fff 0%, #7060ff 100%);
+  --btn-glow: 0 6px 18px rgb(63 94 255 / 38%), inset 0 1px 0 rgb(255 255 255 / 28%);
+  --btn-glow-hover: 0 8px 26px rgb(76 102 255 / 55%), inset 0 1px 0 rgb(255 255 255 / 35%);
+}
+
+html, body, #root {
+  background-color: var(--canvas);
+  background-image:
+    radial-gradient(circle at 12% 8%, rgb(91 130 255 / 22%) 0, transparent 38%),
+    radial-gradient(circle at 92% 92%, rgb(120 90 255 / 18%) 0, transparent 40%),
+    linear-gradient(rgb(47 80 150 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(47 80 150 / 6%) 1px, transparent 1px);
+  background-size: auto, auto, 32px 32px, 32px 32px;
+  background-attachment: fixed;
+}
+
+.sidebar { background: #f4f7fd; border-right-color: var(--line); }
+.topbar { background: rgb(244 247 253 / 88%); border-bottom-color: var(--line); }
+
+.welcome-card {
+  background-color: #0f1d3a;
+  background-image:
+    radial-gradient(circle at 90% 10%, rgb(91 120 255 / 35%) 0, transparent 45%),
+    linear-gradient(rgb(255 255 255 / 5%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 5%) 1px, transparent 1px);
+  background-size: auto, 28px 28px, 28px 28px;
+  box-shadow: 0 14px 40px rgb(15 29 58 / 28%);
+}
+
+.feature-card,
+.gf-panel,
+.gf-summary-card,
+.login-card { border-color: var(--line); box-shadow: 0 4px 16px rgb(36 60 120 / 8%); }
+
+.nav-item.active {
+  background: linear-gradient(135deg, rgb(47 107 255 / 16%), rgb(91 75 255 / 14%));
+  color: #2a4fd0;
+}
+
+/* Botões principais */
+.primary-button,
+.login-submit,
+.gf-button-primary,
+.welcome-card .primary-button {
+  position: relative;
+  color: #fff;
+  background: var(--btn-grad);
+  border: 1px solid rgb(255 255 255 / 18%);
+  box-shadow: var(--btn-glow);
+  letter-spacing: 0.2px;
+  transition: box-shadow .2s, transform .15s, background .2s;
+}
+
+.primary-button:hover,
+.login-submit:hover:not(:disabled),
+.gf-button-primary:not(:disabled):hover,
+.welcome-card .primary-button:hover {
+  background: var(--btn-grad-hover);
+  box-shadow: var(--btn-glow-hover);
+  transform: translateY(-1px);
+}
+
+.primary-button:active,
+.login-submit:active:not(:disabled),
+.gf-button-primary:not(:disabled):active { transform: translateY(0); }
+
+/* Botões secundários e de perigo */
+.gf-button-secondary {
+  color: #2a4fd0;
+  background: rgb(47 107 255 / 8%);
+  border: 1px solid rgb(47 107 255 / 35%);
+  transition: background .2s, box-shadow .2s, border-color .2s;
+}
+
+.gf-button-secondary:not(:disabled):hover {
+  background: rgb(47 107 255 / 15%);
+  border-color: #2f6bff;
+  box-shadow: 0 0 0 3px rgb(47 107 255 / 14%);
+}
+
+.gf-button-danger:not(:disabled):hover { box-shadow: 0 0 0 3px rgb(220 70 70 / 14%); }
+
+.logout-button:hover { box-shadow: 0 0 0 3px rgb(220 70 70 / 12%); }
+
+.login-page {
+  background-color: var(--canvas);
+  background-image:
+    radial-gradient(circle at 15% 15%, rgb(91 130 255 / 28%) 0, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgb(120 90 255 / 22%) 0, transparent 40%),
+    linear-gradient(rgb(47 80 150 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(47 80 150 / 6%) 1px, transparent 1px);
+  background-size: auto, auto, 32px 32px, 32px 32px;
+}
