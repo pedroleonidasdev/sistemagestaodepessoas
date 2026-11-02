@@ -1,46 +1,42 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
 # Segredos e variáveis de ambiente
 .env
 .env.*
 !.env.example
 !.env.sample
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.sample
 
-# Configurações locais que podem conter credenciais
-application-local.properties
-application-prod.properties
+# Dependências e builds
+**/node_modules/
+**/target/
+**/dist/
+**/build/
+
+# IDEs e sistema
+.idea/
+.vscode/
+**/.idea/
+**/.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs e temporários
+*.log
+*.tmp
+*.bak
+*.backup
+*.old
+
+# Bancos de dados e dumps
+*.sql
+!src/main/resources/db/migration/*.sql
+*.sql.gz
+*.dump
+*.sqlite
+*.sqlite3
+*.db
 
 # Certificados e chaves privadas
 *.pem
@@ -48,22 +44,17 @@ application-prod.properties
 *.p12
 *.pfx
 
-# Relatórios e documentos gerados localmente
+# Relatórios locais
 *.pdf
 
-# Logs e arquivos temporários
-*.log
-*.tmp
-*.bak
+# Outros armazenamentos de chaves e certificados
+*.jks
+*.keystore
 
-# Bancos de dados locais e dumps
-*.sql
-*.sql.gz
-*.dump
-*.sqlite
-*.sqlite3
-*.db
+# Eclipse / STS
+.classpath
+.project
+.settings/
 
-# Backups adicionais
-*.backup
-*.old
+# Arquivos gerados
+HELP.md

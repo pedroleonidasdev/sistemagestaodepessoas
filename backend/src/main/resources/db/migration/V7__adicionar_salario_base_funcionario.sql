@@ -1,0 +1,3 @@
+
+ALTER TABLE funcionarios
+ADD COLUMN salario_base DECIMAL(12,2) NOT NULL DEFAULT 0.00;
