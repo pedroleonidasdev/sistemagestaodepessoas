@@ -995,7 +995,7 @@ function GestaoFolha() {
               ) : (
                 itens.map((item) => (
                   <tr key={item.id}>
-                    <td>
+                    <td className="gf-cell-main">
                       <strong>
                         {item.nomeFuncionario ||
                           item.funcionarioNome ||
@@ -1007,22 +1007,22 @@ function GestaoFolha() {
                       </span>
                     </td>
 
-                    <td>{moeda(item.salarioBase)}</td>
-                    <td>{moeda(item.totalProventos)}</td>
-                    <td>{moeda(item.totalDescontos)}</td>
+                    <td data-label="Salário base">{moeda(item.salarioBase)}</td>
+                    <td data-label="Proventos">{moeda(item.totalProventos)}</td>
+                    <td data-label="Descontos">{moeda(item.totalDescontos)}</td>
 
-                    <td className="gf-net-value">
+                    <td className="gf-net-value" data-label="Líquido">
                       {moeda(item.salarioLiquido)}
                     </td>
 
-                    <td>
+                    <td data-label="Situação">
                       <span className="gf-calculation-status">
                         {numero(item.totalProventos) > 0
                           ? "Valores disponíveis"
                           : "Aguardando cálculo"}
                       </span>
                     </td>
-                    <td>
+                    <td className="gf-cell-actions">
                       <div className="gf-row-actions">
                         {folhaAberta && (
                           <>
@@ -1071,13 +1071,13 @@ function GestaoFolha() {
             {!carregando && itens.length > 0 && (
               <tfoot>
                 <tr>
-                  <td colSpan="2">Totais</td>
-                  <td>{moeda(totalProventos)}</td>
-                  <td>{moeda(totalDescontos)}</td>
-                  <td className="gf-net-value">
+                  <td colSpan="2" className="gf-cell-main">Totais</td>
+                  <td data-label="Proventos">{moeda(totalProventos)}</td>
+                  <td data-label="Descontos">{moeda(totalDescontos)}</td>
+                  <td className="gf-net-value" data-label="Líquido">
                     {moeda(totalLiquido)}
                   </td>
-                  <td>—</td>
+                  <td className="gf-cell-hide-mobile">—</td>
                 </tr>
               </tfoot>
             )}

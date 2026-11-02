@@ -1105,3 +1105,195 @@ body {
 .gf-table .gf-net-value { color: #5fe0b4; }
 .gf-empty { color: #8fa2cc !important; }
 .gf-calculation-status { color: #5fe0b4; background: rgb(40 190 140 / 16%); }
+
+
+/* ==========================================================
+   Otimização para dispositivos móveis
+   (mantenha este bloco no final para sobrescrever os temas)
+   ========================================================== */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+button, .nav-item, .gf-button, .logout-button { touch-action: manipulation; }
+
+@media (max-width: 850px) {
+  /* Menu vira cabeçalho compacto: marca + usuário na 1ª linha, abas abaixo */
+  .sidebar {
+    position: static;
+    transform: none;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: calc(12px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 10px calc(14px + env(safe-area-inset-left));
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .sidebar-brand { order: 1; flex: 1 1 auto; padding: 0; min-width: 0; }
+  .brand-mark { width: 38px; height: 38px; border-radius: 10px; }
+  .sidebar-brand h1 { font-size: 18px; }
+  .sidebar-brand span { font-size: 12px; margin-top: 1px; }
+  .sidebar-footer { display: none; }
+
+  .login-user-area {
+    order: 2;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .login-user-info { margin: 0; }
+  .login-user-info > div:last-child { display: none; }
+  .login-user-avatar { width: 38px; height: 38px; }
+  .logout-button {
+    width: 44px; height: 44px; padding: 0;
+    font-size: 0; gap: 0; flex: 0 0 auto;
+  }
+  .login-user-area .login-session-error { flex-basis: 100%; }
+
+  .sidebar-nav {
+    order: 3;
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .sidebar-nav::-webkit-scrollbar { display: none; }
+  .nav-caption { display: none; }
+  .nav-item {
+    flex: 1 1 0;
+    min-width: max-content;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 14px;
+    white-space: nowrap;
+    font-size: 14px;
+    border: 1px solid var(--line);
+  }
+  .nav-item.active { border-color: rgb(120 150 255 / 45%); }
+
+  .topbar {
+    padding: 14px calc(16px + env(safe-area-inset-right)) 14px calc(16px + env(safe-area-inset-left));
+  }
+  .topbar h2 { font-size: 19px; }
+  .topbar p { font-size: 13px; }
+
+  .dashboard-content,
+  .gestao-folha {
+    padding-left: calc(16px + env(safe-area-inset-left));
+    padding-right: calc(16px + env(safe-area-inset-right));
+  }
+}
+
+@media (max-width: 700px) {
+  /* 16px nos campos evita o zoom automático do iOS ao focar */
+  .gf-input,
+  .login-input-wrap input { font-size: 16px; }
+  .gf-input { min-height: 48px; }
+  .gf-button { min-height: 48px; }
+  .gf-button-small { min-height: 44px; padding: 8px 12px; }
+
+  .gf-header h2 { font-size: 22px; }
+  .gf-panel-heading { align-items: flex-start; }
+  .gf-panel-heading h3 { font-size: 16px; }
+  .gf-summary { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .gf-summary-card { padding: 14px; }
+  .gf-summary-card span { font-size: 12.5px; padding-right: 22px; }
+  .gf-summary-card strong { font-size: 17px; margin-top: 8px; }
+
+  /* Tabela de funcionários da folha → cards */
+  .gf-table-wrap { overflow: visible; }
+  .gf-table,
+  .gf-table tbody,
+  .gf-table tfoot,
+  .gf-table tr,
+  .gf-table td { display: block; width: 100%; }
+  .gf-table { white-space: normal; }
+  .gf-table thead {
+    position: absolute; width: 1px; height: 1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .gf-table tbody tr,
+  .gf-table tfoot tr {
+    margin-bottom: 12px;
+    padding: 6px 14px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgb(255 255 255 / 4%);
+  }
+  .gf-table tfoot tr { background: rgb(255 255 255 / 8%); }
+  .gf-table td,
+  .gf-table tfoot td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px solid rgb(120 150 255 / 14%);
+    background: transparent;
+    text-align: right;
+    font-size: 14.5px;
+  }
+  .gf-table tbody tr:hover td { background: transparent; }
+  .gf-table td::before {
+    content: attr(data-label);
+    flex: 0 0 auto;
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+  }
+  .gf-table td.gf-cell-main {
+    display: block;
+    text-align: left;
+    padding: 12px 0 10px;
+    font-size: 16px;
+  }
+  .gf-table td.gf-cell-main::before { content: none; }
+  .gf-table td.gf-cell-main strong { font-size: 16px; }
+  .gf-table td.gf-cell-actions { display: block; padding: 12px 0 0; border: 0; }
+  .gf-table td.gf-cell-actions::before { content: none; }
+  .gf-table td.gf-cell-hide-mobile { display: none; }
+  .gf-table tbody tr:last-child td,
+  .gf-table tfoot tr td:last-child { border-bottom: 1px solid rgb(120 150 255 / 14%); }
+  .gf-table tbody tr td.gf-cell-actions,
+  .gf-table tbody tr:last-child td.gf-cell-actions { border-bottom: 0; }
+  .gf-table td.gf-empty {
+    display: block; text-align: center; padding: 24px 8px !important; border: 0;
+  }
+  .gf-table td.gf-empty::before { content: none; }
+
+  .gf-calculation-status {
+    display: inline-block; padding: 5px 10px; border-radius: 20px;
+  }
+
+  .gf-row-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .gf-row-actions .gf-button:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+  .gf-edit-panel .gf-panel-heading { flex-wrap: wrap; }
+}
+
+@media (max-width: 560px) {
+  .login-page { padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom)); }
+  .login-card { padding: 26px 20px; border-radius: 16px; }
+  .login-submit, .login-input-wrap { min-height: 52px; }
+  .login-input-wrap input { min-height: 48px; }
+
+  .welcome-card { padding: 24px 20px; border-radius: 16px; }
+  .welcome-card h2 { max-width: none; }
+  .welcome-card .welcome-description { font-size: 15px; margin-bottom: 22px; }
+  .welcome-card .primary-button { width: 100%; min-height: 48px; }
+  .feature-card { padding: 18px; }
+}
+
+@media (max-width: 360px) {
+  .gf-summary { grid-template-columns: 1fr; }
+  .sidebar-brand span { display: none; }
+}
