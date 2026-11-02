@@ -680,13 +680,13 @@ function GestaoFolha() {
           <table className="gf-table">
             <thead>
               <tr>
-                <th>FUNCIONÁRIO</th>
-                <th>SALÁRIO BASE</th>
-                <th>PROVENTOS</th>
-                <th>DESCONTOS</th>
-                <th>LÍQUIDO</th>
-                <th>SITUAÇÃO</th>
-                <th>AÇÕES</th>
+                <th>Funcionário</th>
+                <th>Salário base</th>
+                <th>Proventos</th>
+                <th>Descontos</th>
+                <th>Líquido</th>
+                <th>Situação</th>
+                <th>Ações</th>
               </tr>
             </thead>
 

@@ -1,7 +1,12 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Wallet,
+  CalendarDays,
+  Calculator,
+  FileDown,
+  Users,
+  ArrowRight,
   LogOut,
   LockKeyhole,
   User,
@@ -22,7 +27,7 @@ function TelaLogin({ onLogin }) {
     setErro("");
 
     if (!username.trim() || !password) {
-      setErro("Informe o usuÃ¡rio e a senha.");
+      setErro("Informe o usuário e a senha.");
       return;
     }
 
@@ -31,7 +36,7 @@ function TelaLogin({ onLogin }) {
       await login(username.trim(), password);
       await onLogin();
     } catch (error) {
-      setErro(error.message || "NÃ£o foi possÃ­vel entrar no sistema.");
+      setErro(error.message || "Não foi possível entrar no sistema.");
     } finally {
       setCarregando(false);
     }
@@ -45,20 +50,20 @@ function TelaLogin({ onLogin }) {
         </div>
 
         <div className="login-heading">
-          <span>GESTÃƒO DP</span>
+          <span>Gestão DP</span>
           <h1>Bem-vindo de volta</h1>
           <p>Entre com suas credenciais para acessar o sistema.</p>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
-          <label htmlFor="login-username">UsuÃ¡rio</label>
+          <label htmlFor="login-username">Usuário</label>
           <div className="login-input-wrap">
             <User size={18} />
             <input
               id="login-username"
               type="text"
               autoComplete="username"
-              placeholder="Seu usuÃ¡rio"
+              placeholder="Seu usuário"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
               disabled={carregando}
@@ -157,16 +162,23 @@ function App() {
       setUsuario(null);
       setPagina("dashboard");
     } catch (error) {
-      setErroSessao(error.message || "NÃ£o foi possÃ­vel encerrar a sessÃ£o.");
+      setErroSessao(error.message || "Não foi possível encerrar a sessão.");
     }
   }
+
+  const dataHoje = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   if (verificandoSessao) {
     return (
       <main className="login-page">
         <div className="login-loading">
           <LoaderCircle size={28} className="login-spinner" />
-          <span>Verificando sessÃ£o...</span>
+          <span>Verificando sessão...</span>
         </div>
       </main>
     );
@@ -180,14 +192,17 @@ function App() {
     <div className="app">
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <Wallet size={28} />
-          <div>
-            <h1>GestÃ£o DP</h1>
+          <div className="brand-mark">
+            <Wallet size={22} />
+          </div>
+          <div className="brand-text">
+            <h1>Gestão DP</h1>
             <span>Departamento Pessoal</span>
           </div>
         </div>
 
-        <nav className="sidebar-nav">
+        <nav className="sidebar-nav" aria-label="Navegação principal">
+          <p className="nav-caption">Menu</p>
           <button
             type="button"
             className={`nav-item ${pagina === "dashboard" ? "active" : ""}`}
@@ -218,7 +233,7 @@ function App() {
             </div>
             <div>
               <strong>{usuario}</strong>
-              <span>UsuÃ¡rio conectado</span>
+              <span>Usuário conectado</span>
             </div>
           </div>
 
@@ -244,28 +259,57 @@ function App() {
             <h2>
               {pagina === "dashboard" ? "Dashboard" : "Folha de pagamento"}
             </h2>
-            <p>GestÃ£o de Departamento Pessoal</p>
+            <p>Gestão de Departamento Pessoal</p>
           </div>
         </header>
 
         {pagina === "dashboard" ? (
           <section className="dashboard-content">
             <div className="welcome-card">
-              <span>GESTÃƒO DP</span>
-              <h2>Bem-vindo ao sistema!</h2>
-              <p>
-                Gerencie as folhas de pagamento da sua empresa
-                em um sÃ³ lugar.
-              </p>
+              <div className="welcome-text">
+                <p className="welcome-date">
+                  <CalendarDays size={15} />
+                  {dataHoje}
+                </p>
+                <h2>Olá, {usuario}. Bem-vindo ao sistema!</h2>
+                <p className="welcome-description">
+                  Gerencie as folhas de pagamento da sua empresa em um só lugar:
+                  adicione funcionários, calcule valores e emita os documentos.
+                </p>
 
-              <button
-                type="button"
-                className="primary-button"
-                onClick={() => setPagina("folha")}
-              >
-                <Wallet size={18} />
-                Acessar folha de pagamento
-              </button>
+                <button
+                  type="button"
+                  className="primary-button"
+                  onClick={() => setPagina("folha")}
+                >
+                  <Wallet size={18} />
+                  Acessar folha de pagamento
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+
+            <div className="feature-grid">
+              <article className="feature-card">
+                <span className="feature-icon blue"><Users size={20} /></span>
+                <h3>Funcionários na folha</h3>
+                <p>Inclua os funcionários da empresa em cada competência.</p>
+              </article>
+              <article className="feature-card">
+                <span className="feature-icon purple"><Calculator size={20} /></span>
+                <h3>Cálculo automático</h3>
+                <p>Calcule proventos, descontos e o valor líquido da folha.</p>
+              </article>
+              <article className="feature-card">
+                <span className="feature-icon green"><FileDown size={20} /></span>
+                <h3>Holerites e relatório</h3>
+                <p>Baixe o holerite de cada funcionário e o relatório da folha.</p>
+              </article>
+              <article className="feature-card">
+                <span className="feature-icon orange"><LockKeyhole size={20} /></span>
+                <h3>Fechamento da folha</h3>
+                <p>Feche a competência para impedir novas alterações.</p>
+              </article>
             </div>
           </section>
         ) : (

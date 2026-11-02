@@ -394,3 +394,33 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Refinamento visual */
+.gestao-folha { padding: 28px 40px 40px; max-width: 1500px; margin: 0 auto; gap: 20px; }
+.gf-header h2 { font-family: 'Manrope', sans-serif; font-weight: 800; letter-spacing: -0.5px; }
+.gf-header p, .gf-panel-heading p { font-size: 14px; }
+.gf-eyebrow { letter-spacing: 0; font-size: 13px; font-weight: 700; }
+.gf-panel { border-color: #e6ebf3; border-radius: 14px; box-shadow: none; }
+.gf-panel-heading h3 { font-family: 'Manrope', sans-serif; font-size: 17px; }
+.gf-label { font-size: 13px; }
+.gf-input { font-size: 14.5px; min-height: 46px; }
+.gf-input:focus { outline: 0; box-shadow: 0 0 0 3px rgb(47 95 215 / 25%); }
+.gf-button { font-size: 14px; min-height: 44px; border-radius: 10px; }
+.gf-button-small { font-size: 13px; min-height: 36px; }
+.gf-button-primary { background: #2f5fd7; }
+.gf-button-primary:not(:disabled):hover { background: #2549ad; }
+.gf-summary-card { border-color: #e6ebf3; border-radius: 14px; padding: 20px; }
+.gf-summary-card span { font-size: 13.5px; }
+.gf-summary-card strong { font-family: 'Manrope', sans-serif; letter-spacing: -0.4px; }
+.gf-table th { font-size: 12.5px; font-weight: 700; color: #6b7891; background: #f8faff; text-transform: none; }
+.gf-table td { font-size: 14px; }
+.gf-table td strong { font-size: 14px; }
+.gf-table tbody tr:hover td { background: #fafbfe; }
+.gf-subtitle { font-size: 12.5px; }
+.gf-message { font-size: 14px; }
+.gf-help { font-size: 13.5px; }
+.gf-calculation-status { font-size: 12.5px; }
+
+@media (max-width: 1200px) { .gestao-folha { padding: 24px 26px 34px; } }
+@media (max-width: 560px) { .gestao-folha { padding: 18px 14px 28px; } }
