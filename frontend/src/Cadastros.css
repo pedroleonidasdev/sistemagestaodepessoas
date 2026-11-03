@@ -1,0 +1,58 @@
+.cd-abas {
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  background: rgb(8 16 38 / 55%);
+  border: 1px solid rgb(120 150 255 / 22%);
+  border-radius: 12px;
+}
+
+.cd-aba {
+  padding: 10px 18px;
+  color: #a3b2d6;
+  font: 600 14px 'DM Sans', sans-serif;
+  white-space: nowrap;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+
+.cd-aba:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 6%);
+}
+
+.cd-aba.ativa {
+  color: #fff;
+  background: linear-gradient(135deg, #2f6bff 0%, #5b4bff 100%);
+  box-shadow: 0 4px 14px rgb(63 94 255 / 35%);
+}
+
+.cd-aba:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgb(79 125 255 / 40%);
+}
+
+.cd-bloco {
+  display: grid;
+  gap: 20px;
+}
+
+.cd-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cd-resumo {
+  margin: 0;
+  color: #a3b2d6;
+  font-size: 14px;
+}

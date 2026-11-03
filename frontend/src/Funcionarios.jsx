@@ -13,6 +13,8 @@ import {
   alterarSituacaoFuncionario,
   atualizarFuncionario,
   cadastrarFuncionario,
+  cargosApi,
+  departamentosApi,
   listarFuncionarios,
   obterEmpresaId,
 } from "./services/api";
@@ -40,12 +42,23 @@ const FORM_VAZIO = {
   salarioBase: "",
   dataAdmissao: "",
   situacao: "ATIVO",
+  departamentoId: "",
+  cargoId: "",
 };
+
+/** Opções ativas, mais a atual do funcionário mesmo que esteja inativa. */
+function opcoes(lista, atualId) {
+  return lista.filter(
+    (item) => item.ativo !== false || String(item.id) === String(atualId)
+  );
+}
 
 function Funcionarios() {
   const empresaIdRef = useRef(null);
 
   const [funcionarios, setFuncionarios] = useState([]);
+  const [departamentos, setDepartamentos] = useState([]);
+  const [cargos, setCargos] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [processando, setProcessando] = useState(false);
   const [erro, setErro] = useState("");
@@ -64,8 +77,16 @@ function Funcionarios() {
 
     try {
       empresaIdRef.current = await obterEmpresaId();
-      const dados = await listarFuncionarios(empresaIdRef.current);
+
+      const [dados, listaDepartamentos, listaCargos] = await Promise.all([
+        listarFuncionarios(empresaIdRef.current),
+        departamentosApi.listar(empresaIdRef.current),
+        cargosApi.listar(empresaIdRef.current),
+      ]);
+
       setFuncionarios(Array.isArray(dados) ? dados : []);
+      setDepartamentos(listaDepartamentos);
+      setCargos(listaCargos);
     } catch (error) {
       setErro(error.message || "Não foi possível carregar os funcionários.");
     } finally {
@@ -122,6 +143,8 @@ function Funcionarios() {
       salarioBase: String(funcionario.salarioBase ?? ""),
       dataAdmissao: String(funcionario.dataAdmissao ?? "").slice(0, 10),
       situacao: funcionario.situacao ?? "ATIVO",
+      departamentoId: String(funcionario.departamentoId ?? ""),
+      cargoId: String(funcionario.cargoId ?? ""),
     });
     setErro("");
     setMensagem("");
@@ -148,6 +171,10 @@ function Funcionarios() {
       salarioBase: String(form.salarioBase).replace(",", "."),
       dataAdmissao: form.dataAdmissao,
       situacao: form.situacao,
+      departamentoId: form.departamentoId
+        ? Number(form.departamentoId)
+        : null,
+      cargoId: form.cargoId ? Number(form.cargoId) : null,
     };
 
     if (!dados.matricula || !dados.nomeCompleto) {
@@ -183,11 +210,7 @@ function Funcionarios() {
       } else {
         await atualizarFuncionario(
           editando.id,
-          {
-            ...dados,
-            departamentoId: editando.departamentoId,
-            cargoId: editando.cargoId,
-          },
+          dados,
           empresaIdRef.current
         );
         setMensagem(`Dados de ${dados.nomeCompleto} atualizados.`);
@@ -400,6 +423,48 @@ function Funcionarios() {
                 />
               </div>
 
+              <div className="gf-form-field">
+                <label className="gf-label" htmlFor="fn-departamento">
+                  Departamento (opcional)
+                </label>
+                <select
+                  id="fn-departamento"
+                  className="gf-input"
+                  value={form.departamentoId}
+                  onChange={(e) => alterarCampo("departamentoId", e.target.value)}
+                  disabled={processando}
+                >
+                  <option value="">Sem departamento</option>
+                  {opcoes(departamentos, form.departamentoId).map((item) => (
+                    <option key={item.id} value={String(item.id)}>
+                      {item.nome}
+                      {item.ativo === false ? " (inativo)" : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="gf-form-field">
+                <label className="gf-label" htmlFor="fn-cargo">
+                  Cargo (opcional)
+                </label>
+                <select
+                  id="fn-cargo"
+                  className="gf-input"
+                  value={form.cargoId}
+                  onChange={(e) => alterarCampo("cargoId", e.target.value)}
+                  disabled={processando}
+                >
+                  <option value="">Sem cargo</option>
+                  {opcoes(cargos, form.cargoId).map((item) => (
+                    <option key={item.id} value={String(item.id)}>
+                      {item.nome}
+                      {item.ativo === false ? " (inativo)" : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {editando !== "novo" && (
                 <div className="gf-form-field">
                   <label className="gf-label" htmlFor="fn-situacao">
@@ -469,6 +534,7 @@ function Funcionarios() {
               <tr>
                 <th>Matrícula</th>
                 <th>Funcionário</th>
+                <th>Departamento / cargo</th>
                 <th>Salário base</th>
                 <th>Admissão</th>
                 <th>Situação</th>
@@ -479,13 +545,13 @@ function Funcionarios() {
             <tbody>
               {carregando ? (
                 <tr>
-                  <td colSpan="6" className="gf-empty">
+                  <td colSpan="7" className="gf-empty">
                     Carregando funcionários...
                   </td>
                 </tr>
               ) : visiveis.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="gf-empty">
+                  <td colSpan="7" className="gf-empty">
                     {funcionarios.length === 0
                       ? "Nenhum funcionário cadastrado. Use o botão Novo funcionário."
                       : "Nenhum funcionário encontrado com esses filtros."}
@@ -498,6 +564,12 @@ function Funcionarios() {
                     <td>
                       <strong>{f.nomeCompleto}</strong>
                       <span className="gf-subtitle">{formatarCpf(f.cpf)}</span>
+                    </td>
+                    <td>
+                      {f.nomeDepartamento || "—"}
+                      <span className="gf-subtitle">
+                        {f.nomeCargo || "Sem cargo"}
+                      </span>
                     </td>
                     <td>{moeda(f.salarioBase)}</td>
                     <td>{dataBR(f.dataAdmissao)}</td>

@@ -346,7 +346,7 @@ export async function obterEmpresaId() {
 
   if (!empresa) {
     throw new Error(
-      "Nenhuma empresa cadastrada. Cadastre uma empresa para continuar."
+      "Nenhuma empresa cadastrada. Cadastre a empresa em Cadastros > Empresa."
     );
   }
 
@@ -367,6 +367,10 @@ export function cadastrarFuncionario(dados, empresaId = 1) {
       salarioBase: Number(dados.salarioBase),
       dataAdmissao: dados.dataAdmissao,
       situacao: "ATIVO",
+      departamento: dados.departamentoId
+        ? { id: Number(dados.departamentoId) }
+        : null,
+      cargo: dados.cargoId ? { id: Number(dados.cargoId) } : null,
     }),
   });
 }
@@ -387,9 +391,9 @@ export function atualizarFuncionario(funcionarioId, dados, empresaId = 1) {
         dataAdmissao: dados.dataAdmissao,
         situacao: dados.situacao,
         departamento: dados.departamentoId
-          ? { id: dados.departamentoId }
+          ? { id: Number(dados.departamentoId) }
           : null,
-        cargo: dados.cargoId ? { id: dados.cargoId } : null,
+        cargo: dados.cargoId ? { id: Number(dados.cargoId) } : null,
       }),
     }
   );
@@ -435,3 +439,75 @@ export function excluirFolha(folhaId, empresaId = 1) {
     }
   );
 }
+
+/**
+ * Esquece a empresa guardada, para ela ser buscada de novo.
+ */
+export function redefinirEmpresa() {
+  empresaAtualId = null;
+}
+
+export async function listarEmpresas() {
+  const dados = await apiFetch("/api/empresas");
+  return Array.isArray(dados) ? dados : [];
+}
+
+/**
+ * Cadastra a empresa (sem id) ou atualiza uma existente (com id).
+ */
+export async function salvarEmpresa(dados, id) {
+  const resultado = await apiFetch(
+    id ? `/api/empresas/${id}` : "/api/empresas",
+    {
+      method: id ? "PUT" : "POST",
+      body: JSON.stringify({
+        razaoSocial: dados.razaoSocial,
+        nomeFantasia: dados.nomeFantasia || null,
+        cnpj: dados.cnpj,
+      }),
+    }
+  );
+
+  redefinirEmpresa();
+  return resultado;
+}
+
+/**
+ * Operações iguais para departamentos e cargos (nome, descrição e ativo).
+ */
+function recursoDaEmpresa(caminho) {
+  const base = (empresaId) => `/api/empresas/${empresaId}/${caminho}`;
+
+  return {
+    async listar(empresaId) {
+      const dados = await apiFetch(base(empresaId));
+      return Array.isArray(dados) ? dados : [];
+    },
+    criar(empresaId, dados) {
+      return apiFetch(base(empresaId), {
+        method: "POST",
+        body: JSON.stringify({
+          nome: dados.nome,
+          descricao: dados.descricao || null,
+        }),
+      });
+    },
+    atualizar(empresaId, id, dados) {
+      return apiFetch(`${base(empresaId)}/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          nome: dados.nome,
+          descricao: dados.descricao || null,
+        }),
+      });
+    },
+    alterarSituacao(empresaId, id, ativo) {
+      return apiFetch(`${base(empresaId)}/${id}/situacao?ativo=${ativo}`, {
+        method: "PATCH",
+      });
+    },
+  };
+}
+
+export const departamentosApi = recursoDaEmpresa("departamentos");
+export const cargosApi = recursoDaEmpresa("cargos");

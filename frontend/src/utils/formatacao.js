@@ -86,3 +86,35 @@ export function cpfValido(valor) {
 
   return true;
 }
+
+export function formatarCnpj(cnpj) {
+  const d = somenteDigitos(cnpj);
+
+  if (d.length !== 14) return cnpj || "—";
+
+  return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}`;
+}
+
+/** Confere tamanho, dígitos repetidos e dígitos verificadores do CNPJ. */
+export function cnpjValido(valor) {
+  const cnpj = somenteDigitos(valor);
+
+  if (cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
+
+  for (const posicao of [12, 13]) {
+    let peso = posicao - 7;
+    let soma = 0;
+
+    for (let i = 0; i < posicao; i++) {
+      soma += Number(cnpj[i]) * peso;
+      peso = peso === 2 ? 9 : peso - 1;
+    }
+
+    const resto = soma % 11;
+    const digito = resto < 2 ? 0 : 11 - resto;
+
+    if (digito !== Number(cnpj[posicao])) return false;
+  }
+
+  return true;
+}

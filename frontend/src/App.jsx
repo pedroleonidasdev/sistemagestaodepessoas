@@ -3,11 +3,13 @@ import {
   LayoutDashboard,
   Wallet,
   Users,
+  Building2,
   LogOut,
   LockKeyhole,
   User,
   LoaderCircle,
 } from "lucide-react";
+import Cadastros from "./Cadastros";
 import Dashboard from "./Dashboard";
 import Funcionarios from "./Funcionarios";
 import GestaoFolha from "./GestaoFolha";
@@ -114,6 +116,7 @@ const PAGINAS = {
   dashboard: "Dashboard",
   funcionarios: "Funcionários",
   folha: "Folha de pagamento",
+  cadastros: "Cadastros",
 };
 
 function paginaDoHash() {
@@ -246,6 +249,16 @@ function App() {
             <Wallet size={19} />
             Folha de pagamento
           </button>
+
+          <button
+            type="button"
+            className={`nav-item ${pagina === "cadastros" ? "active" : ""}`}
+            onClick={() => irPara("cadastros")}
+            aria-current={pagina === "cadastros" ? "page" : undefined}
+          >
+            <Building2 size={19} />
+            Cadastros
+          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -294,6 +307,7 @@ function App() {
         )}
         {pagina === "funcionarios" && <Funcionarios />}
         {pagina === "folha" && <GestaoFolha />}
+        {pagina === "cadastros" && <Cadastros />}
       </main>
     </div>
   );
