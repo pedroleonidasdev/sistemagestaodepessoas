@@ -370,3 +370,68 @@ export function cadastrarFuncionario(dados, empresaId = 1) {
     }),
   });
 }
+
+/**
+ * Atualiza os dados de um funcionário.
+ */
+export function atualizarFuncionario(funcionarioId, dados, empresaId = 1) {
+  return apiFetch(
+    `/api/empresas/${empresaId}/funcionarios/${funcionarioId}`,
+    {
+      method: "PUT",
+      body: JSON.stringify({
+        matricula: dados.matricula,
+        nomeCompleto: dados.nomeCompleto,
+        cpf: dados.cpf,
+        salarioBase: Number(dados.salarioBase),
+        dataAdmissao: dados.dataAdmissao,
+        situacao: dados.situacao,
+        departamento: dados.departamentoId
+          ? { id: dados.departamentoId }
+          : null,
+        cargo: dados.cargoId ? { id: dados.cargoId } : null,
+      }),
+    }
+  );
+}
+
+/**
+ * Altera a situação de um funcionário (ATIVO, AFASTADO ou DESLIGADO).
+ */
+export function alterarSituacaoFuncionario(
+  funcionarioId,
+  situacao,
+  empresaId = 1
+) {
+  return apiFetch(
+    `/api/empresas/${empresaId}/funcionarios/${funcionarioId}/situacao`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(situacao),
+    }
+  );
+}
+
+/**
+ * Volta uma folha calculada para o status aberta.
+ */
+export function reabrirFolha(folhaId, empresaId = 1) {
+  return apiFetch(
+    `/api/empresas/${empresaId}/folhas-pagamento/${folhaId}/reabrir`,
+    {
+      method: "POST",
+    }
+  );
+}
+
+/**
+ * Exclui uma folha que ainda não foi fechada.
+ */
+export function excluirFolha(folhaId, empresaId = 1) {
+  return apiFetch(
+    `/api/empresas/${empresaId}/folhas-pagamento/${folhaId}`,
+    {
+      method: "DELETE",
+    }
+  );
+}

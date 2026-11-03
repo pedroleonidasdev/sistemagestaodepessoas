@@ -227,6 +227,27 @@ public class ItemFolhaPagamentoService {
         itemRepository.delete(item);
     }
 
+    @Transactional
+    public void excluirFolha(Long empresaId, Long folhaId) {
+
+        FolhaPagamento folha =
+                folhaService.buscarPorId(empresaId, folhaId);
+
+        if ("FECHADA".equals(folha.getStatus())) {
+            throw new IllegalStateException(
+                    "Não é possível excluir uma folha fechada."
+            );
+        }
+
+        List<ItemFolhaPagamento> itens =
+                itemRepository.findAllByFolhaId(folhaId);
+
+        itemRepository.deleteAll(itens);
+        itemRepository.flush();
+
+        folhaService.excluir(empresaId, folhaId);
+    }
+
     private BigDecimal validarValor(
             BigDecimal valor,
             String campo) {

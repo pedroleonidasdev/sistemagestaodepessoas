@@ -230,7 +230,13 @@ public class FuncionarioService {
         }
 
         String matricula = funcionario.getMatricula().trim();
-        String cpf = funcionario.getCpf().trim();
+        String cpf = funcionario.getCpf().replaceAll("\\D", "");
+
+        if (!cpfValido(cpf)) {
+            throw new IllegalArgumentException(
+                    "O CPF informado é inválido."
+            );
+        }
 
         boolean matriculaExiste;
 
@@ -276,6 +282,33 @@ public class FuncionarioService {
 
         validarDepartamento(funcionario, empresaId);
         validarCargo(funcionario, empresaId);
+    }
+
+    private boolean cpfValido(String cpf) {
+
+        if (cpf.length() != 11 || cpf.chars().distinct().count() == 1) {
+            return false;
+        }
+
+        for (int posicao = 9; posicao < 11; posicao++) {
+            int soma = 0;
+
+            for (int i = 0; i < posicao; i++) {
+                soma += (cpf.charAt(i) - '0') * (posicao + 1 - i);
+            }
+
+            int digito = (soma * 10) % 11;
+
+            if (digito == 10) {
+                digito = 0;
+            }
+
+            if (digito != cpf.charAt(posicao) - '0') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void validarDepartamento(

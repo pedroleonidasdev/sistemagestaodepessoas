@@ -11,9 +11,13 @@ import java.util.List;
 public class FolhaPagamentoController {
 
     private final FolhaPagamentoService folhaService;
+    private final ItemFolhaPagamentoService itemService;
 
-    public FolhaPagamentoController(FolhaPagamentoService folhaService) {
+    public FolhaPagamentoController(
+            FolhaPagamentoService folhaService,
+            ItemFolhaPagamentoService itemService) {
         this.folhaService = folhaService;
+        this.itemService = itemService;
     }
 
     @PostMapping
@@ -52,5 +56,23 @@ public ResponseEntity<Void> fechar(
         return FolhaPagamentoResponse.from(
                 folhaService.buscarPorId(empresaId, folhaId)
         );
+    }
+
+    @PostMapping("/{folhaId}/reabrir")
+    public ResponseEntity<Void> reabrir(
+            @PathVariable Long empresaId,
+            @PathVariable Long folhaId) {
+
+        folhaService.reabrir(empresaId, folhaId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{folhaId}")
+    public ResponseEntity<Void> excluir(
+            @PathVariable Long empresaId,
+            @PathVariable Long folhaId) {
+
+        itemService.excluirFolha(empresaId, folhaId);
+        return ResponseEntity.noContent().build();
     }
 }

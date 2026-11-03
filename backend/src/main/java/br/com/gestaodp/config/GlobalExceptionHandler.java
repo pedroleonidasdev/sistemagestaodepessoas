@@ -2,6 +2,7 @@ package br.com.gestaodp.config;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,6 +41,18 @@ public class GlobalExceptionHandler {
                         ex.getMessage(),
                         "Operação inválida."
                 )
+        ));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, Object>> tratarAutenticacao(
+            AuthenticationException ex) {
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", 401,
+                "erro", "Não autenticado",
+                "mensagem", "Usuário ou senha inválidos."
         ));
     }
 

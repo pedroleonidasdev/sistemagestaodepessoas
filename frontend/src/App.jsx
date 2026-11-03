@@ -2,16 +2,14 @@ import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Wallet,
-  CalendarDays,
-  Calculator,
-  FileDown,
   Users,
-  ArrowRight,
   LogOut,
   LockKeyhole,
   User,
   LoaderCircle,
 } from "lucide-react";
+import Dashboard from "./Dashboard";
+import Funcionarios from "./Funcionarios";
 import GestaoFolha from "./GestaoFolha";
 import { login, obterSessao, logout } from "./services/api";
 import "./App.css";
@@ -112,8 +110,19 @@ function TelaLogin({ onLogin }) {
   );
 }
 
+const PAGINAS = {
+  dashboard: "Dashboard",
+  funcionarios: "Funcionários",
+  folha: "Folha de pagamento",
+};
+
+function paginaDoHash() {
+  const nome = window.location.hash.replace("#", "");
+  return PAGINAS[nome] ? nome : "dashboard";
+}
+
 function App() {
-  const [pagina, setPagina] = useState("dashboard");
+  const [pagina, setPagina] = useState(paginaDoHash);
   const [usuario, setUsuario] = useState(null);
   const [verificandoSessao, setVerificandoSessao] = useState(true);
   const [erroSessao, setErroSessao] = useState("");
@@ -156,22 +165,27 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const aoMudarHash = () => setPagina(paginaDoHash());
+    window.addEventListener("hashchange", aoMudarHash);
+    return () => window.removeEventListener("hashchange", aoMudarHash);
+  }, []);
+
+  function irPara(nome) {
+    setPagina(nome);
+    window.location.hash = nome;
+  }
+
   async function handleLogout() {
     try {
       await logout();
       setUsuario(null);
       setPagina("dashboard");
+      window.location.hash = "";
     } catch (error) {
       setErroSessao(error.message || "Não foi possível encerrar a sessão.");
     }
   }
-
-  const dataHoje = new Date().toLocaleDateString("pt-BR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 
   if (verificandoSessao) {
     return (
@@ -206,7 +220,8 @@ function App() {
           <button
             type="button"
             className={`nav-item ${pagina === "dashboard" ? "active" : ""}`}
-            onClick={() => setPagina("dashboard")}
+            onClick={() => irPara("dashboard")}
+            aria-current={pagina === "dashboard" ? "page" : undefined}
           >
             <LayoutDashboard size={19} />
             Dashboard
@@ -214,8 +229,19 @@ function App() {
 
           <button
             type="button"
+            className={`nav-item ${pagina === "funcionarios" ? "active" : ""}`}
+            onClick={() => irPara("funcionarios")}
+            aria-current={pagina === "funcionarios" ? "page" : undefined}
+          >
+            <Users size={19} />
+            Funcionários
+          </button>
+
+          <button
+            type="button"
             className={`nav-item ${pagina === "folha" ? "active" : ""}`}
-            onClick={() => setPagina("folha")}
+            onClick={() => irPara("folha")}
+            aria-current={pagina === "folha" ? "page" : undefined}
           >
             <Wallet size={19} />
             Folha de pagamento
@@ -257,64 +283,17 @@ function App() {
         <header className="topbar">
           <div>
             <h2>
-              {pagina === "dashboard" ? "Dashboard" : "Folha de pagamento"}
+              {PAGINAS[pagina]}
             </h2>
             <p>Gestão de Departamento Pessoal</p>
           </div>
         </header>
 
-        {pagina === "dashboard" ? (
-          <section className="dashboard-content">
-            <div className="welcome-card">
-              <div className="welcome-text">
-                <p className="welcome-date">
-                  <CalendarDays size={15} />
-                  {dataHoje}
-                </p>
-                <h2>Olá, {usuario}. Bem-vindo ao sistema!</h2>
-                <p className="welcome-description">
-                  Gerencie as folhas de pagamento da sua empresa em um só lugar:
-                  adicione funcionários, calcule valores e emita os documentos.
-                </p>
-
-                <button
-                  type="button"
-                  className="primary-button"
-                  onClick={() => setPagina("folha")}
-                >
-                  <Wallet size={18} />
-                  Acessar folha de pagamento
-                  <ArrowRight size={16} />
-                </button>
-              </div>
-            </div>
-
-            <div className="feature-grid">
-              <article className="feature-card">
-                <span className="feature-icon blue"><Users size={20} /></span>
-                <h3>Funcionários na folha</h3>
-                <p>Inclua os funcionários da empresa em cada competência.</p>
-              </article>
-              <article className="feature-card">
-                <span className="feature-icon purple"><Calculator size={20} /></span>
-                <h3>Cálculo automático</h3>
-                <p>Calcule proventos, descontos e o valor líquido da folha.</p>
-              </article>
-              <article className="feature-card">
-                <span className="feature-icon green"><FileDown size={20} /></span>
-                <h3>Holerites e relatório</h3>
-                <p>Baixe o holerite de cada funcionário e o relatório da folha.</p>
-              </article>
-              <article className="feature-card">
-                <span className="feature-icon orange"><LockKeyhole size={20} /></span>
-                <h3>Fechamento da folha</h3>
-                <p>Feche a competência para impedir novas alterações.</p>
-              </article>
-            </div>
-          </section>
-        ) : (
-          <GestaoFolha />
+        {pagina === "dashboard" && (
+          <Dashboard usuario={usuario} onNavegar={irPara} />
         )}
+        {pagina === "funcionarios" && <Funcionarios />}
+        {pagina === "folha" && <GestaoFolha />}
       </main>
     </div>
   );

@@ -159,4 +159,38 @@ public void fechar(Long empresaId, Long folhaId) {
     folhaRepository.saveAndFlush(folha);
 }
 
+
+@Transactional
+public void reabrir(Long empresaId, Long folhaId) {
+    FolhaPagamento folha = folhaRepository
+            .findByIdAndEmpresaId(folhaId, empresaId)
+            .orElseThrow(() -> new IllegalArgumentException(
+                    "Folha de pagamento não encontrada para esta empresa."));
+
+    if (!"CALCULADA".equals(folha.getStatus())) {
+        throw new IllegalStateException(
+                "Somente folhas calculadas podem ser reabertas. "
+                + "Folhas fechadas não podem ser alteradas.");
+    }
+
+    folha.setStatus("ABERTA");
+    folhaRepository.saveAndFlush(folha);
+}
+
+@Transactional
+public void excluir(Long empresaId, Long folhaId) {
+    FolhaPagamento folha = folhaRepository
+            .findByIdAndEmpresaId(folhaId, empresaId)
+            .orElseThrow(() -> new IllegalArgumentException(
+                    "Folha de pagamento não encontrada para esta empresa."));
+
+    if ("FECHADA".equals(folha.getStatus())) {
+        throw new IllegalStateException(
+                "Não é possível excluir uma folha fechada.");
+    }
+
+    folhaRepository.delete(folha);
+    folhaRepository.flush();
+}
+
 }

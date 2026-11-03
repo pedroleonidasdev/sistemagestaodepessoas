@@ -1,0 +1,83 @@
+.fn-filtros {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.fn-busca {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.fn-busca > svg {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: #8fa2cc;
+  pointer-events: none;
+}
+
+.fn-busca .gf-input {
+  padding-left: 40px;
+}
+
+.fn-filtro-situacao {
+  width: 220px;
+  flex: 0 0 auto;
+}
+
+.fn-situacao {
+  min-height: 34px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.fn-situacao:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.fn-situacao:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgb(79 125 255 / 28%);
+}
+
+.fn-situacao-ativo {
+  color: #5fe0b4;
+  background: rgb(40 190 140 / 16%);
+  border-color: rgb(40 190 140 / 35%);
+}
+
+.fn-situacao-afastado {
+  color: #ffc46b;
+  background: rgb(240 170 60 / 16%);
+  border-color: rgb(240 170 60 / 35%);
+}
+
+.fn-situacao-desligado {
+  color: #ff9aa2;
+  background: rgb(220 70 70 / 14%);
+  border-color: rgb(220 70 70 / 35%);
+}
+
+.fn-situacao option {
+  color: #fff;
+  background: #0e1a3a;
+}
+
+@media (max-width: 600px) {
+  .fn-filtros {
+    flex-direction: column;
+  }
+
+  .fn-filtro-situacao {
+    width: 100%;
+  }
+}

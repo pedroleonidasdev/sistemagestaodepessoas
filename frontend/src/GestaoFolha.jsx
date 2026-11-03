@@ -16,7 +16,10 @@ import {
   obterEmpresaId,
   criarFolha,
   cadastrarFuncionario,
+  reabrirFolha,
+  excluirFolha,
 } from "./services/api";
+import { cpfValido, hojeISO } from "./utils/formatacao";
 
 import {
   Users,
@@ -47,12 +50,6 @@ const FORM_FUNCIONARIO_VAZIO = {
   salarioBase: "",
   dataAdmissao: "",
 };
-
-function hojeISO() {
-  const data = new Date();
-  data.setMinutes(data.getMinutes() - data.getTimezoneOffset());
-  return data.toISOString().slice(0, 10);
-}
 
 function numero(valor) {
   if (typeof valor === "number") {
@@ -224,6 +221,63 @@ function GestaoFolha() {
     }
   }
 
+  async function reabrirFolhaAtual() {
+    if (!folhaSelecionada) return;
+
+    if (
+      !window.confirm(
+        "Reabrir esta folha? Os valores calculados continuam salvos, " +
+          "mas será preciso calcular a folha de novo antes de fechá-la."
+      )
+    ) {
+      return;
+    }
+
+    setErro("");
+    setMensagem("");
+    setProcessando(true);
+
+    try {
+      await reabrirFolha(folhaSelecionada.id, empresaIdRef.current);
+      await atualizarDados();
+      setMensagem("Folha reaberta. Faça os ajustes e calcule novamente.");
+    } catch (error) {
+      setErro(error.message || "Não foi possível reabrir a folha.");
+    } finally {
+      setProcessando(false);
+    }
+  }
+
+  async function excluirFolhaAtual() {
+    if (!folhaSelecionada) return;
+
+    if (
+      !window.confirm(
+        `Excluir a folha de ${competenciaLegivel(folhaSelecionada.competencia)} ` +
+          "e todos os seus itens? Esta ação não pode ser desfeita."
+      )
+    ) {
+      return;
+    }
+
+    setErro("");
+    setMensagem("");
+    setProcessando(true);
+
+    try {
+      await excluirFolha(folhaSelecionada.id, empresaIdRef.current);
+      setFolhaId("");
+      setItens([]);
+      const lista = await carregarFolhas();
+      setFolhas(lista);
+      setMensagem("Folha excluída com sucesso.");
+    } catch (error) {
+      setErro(error.message || "Não foi possível excluir a folha.");
+    } finally {
+      setProcessando(false);
+    }
+  }
+
   async function abrirNovaFolha(event) {
     event.preventDefault();
     setErro("");
@@ -281,8 +335,8 @@ function GestaoFolha() {
       return;
     }
 
-    if (dados.cpf.length !== 11) {
-      setErro("O CPF deve ter 11 números.");
+    if (!cpfValido(dados.cpf)) {
+      setErro("O CPF informado é inválido.");
       return;
     }
 
@@ -926,6 +980,17 @@ function GestaoFolha() {
             {folhaSelecionada && statusFolha(folhaSelecionada.status) === "CALCULADA" && (
               <button
                 type="button"
+                className="gf-button gf-button-secondary"
+                onClick={reabrirFolhaAtual}
+                disabled={carregando || processando}
+              >
+                <RefreshCw size={17} />
+                Reabrir folha
+              </button>
+            )}
+            {folhaSelecionada && statusFolha(folhaSelecionada.status) === "CALCULADA" && (
+              <button
+                type="button"
                 className="gf-button gf-button-primary"
                 onClick={executarFechamento}
                 disabled={carregando || processando}
@@ -946,6 +1011,17 @@ function GestaoFolha() {
               >
                 <FileDown size={17} />
                 Relatório PDF
+              </button>
+            )}
+            {folhaSelecionada && statusFolha(folhaSelecionada.status) !== "FECHADA" && (
+              <button
+                type="button"
+                className="gf-button gf-button-danger"
+                onClick={excluirFolhaAtual}
+                disabled={carregando || processando}
+              >
+                <Trash2 size={17} />
+                Excluir folha
               </button>
             )}
             <button
@@ -995,7 +1071,7 @@ function GestaoFolha() {
               ) : (
                 itens.map((item) => (
                   <tr key={item.id}>
-                    <td className="gf-cell-main">
+                    <td>
                       <strong>
                         {item.nomeFuncionario ||
                           item.funcionarioNome ||
@@ -1007,22 +1083,22 @@ function GestaoFolha() {
                       </span>
                     </td>
 
-                    <td data-label="Salário base">{moeda(item.salarioBase)}</td>
-                    <td data-label="Proventos">{moeda(item.totalProventos)}</td>
-                    <td data-label="Descontos">{moeda(item.totalDescontos)}</td>
+                    <td>{moeda(item.salarioBase)}</td>
+                    <td>{moeda(item.totalProventos)}</td>
+                    <td>{moeda(item.totalDescontos)}</td>
 
-                    <td className="gf-net-value" data-label="Líquido">
+                    <td className="gf-net-value">
                       {moeda(item.salarioLiquido)}
                     </td>
 
-                    <td data-label="Situação">
+                    <td>
                       <span className="gf-calculation-status">
                         {numero(item.totalProventos) > 0
                           ? "Valores disponíveis"
                           : "Aguardando cálculo"}
                       </span>
                     </td>
-                    <td className="gf-cell-actions">
+                    <td>
                       <div className="gf-row-actions">
                         {folhaAberta && (
                           <>
@@ -1071,13 +1147,13 @@ function GestaoFolha() {
             {!carregando && itens.length > 0 && (
               <tfoot>
                 <tr>
-                  <td colSpan="2" className="gf-cell-main">Totais</td>
-                  <td data-label="Proventos">{moeda(totalProventos)}</td>
-                  <td data-label="Descontos">{moeda(totalDescontos)}</td>
-                  <td className="gf-net-value" data-label="Líquido">
+                  <td colSpan="2">Totais</td>
+                  <td>{moeda(totalProventos)}</td>
+                  <td>{moeda(totalDescontos)}</td>
+                  <td className="gf-net-value">
                     {moeda(totalLiquido)}
                   </td>
-                  <td className="gf-cell-hide-mobile">—</td>
+                  <td>—</td>
                 </tr>
               </tfoot>
             )}
