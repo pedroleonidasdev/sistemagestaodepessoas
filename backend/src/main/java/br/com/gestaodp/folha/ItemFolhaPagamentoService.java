@@ -86,6 +86,20 @@ public class ItemFolhaPagamentoService {
                 salarioBase.setScale(2, RoundingMode.HALF_UP)
         );
 
+        item.setNumeroDependentes(
+                funcionario.getNumeroDependentes() == null
+                        ? 0
+                        : funcionario.getNumeroDependentes()
+        );
+        item.setValeTransporte(
+                funcionario.getValeTransporteMensal() == null
+                        ? BigDecimal.ZERO.setScale(2)
+                        : funcionario.getValeTransporteMensal()
+        );
+        item.setDiasFaltas(0);
+        item.setDescontoFaltas(BigDecimal.ZERO.setScale(2));
+        item.setDescontoValeTransporte(BigDecimal.ZERO.setScale(2));
+
         item.setHorasExtras(BigDecimal.ZERO.setScale(2));
         item.setAdicionais(BigDecimal.ZERO.setScale(2));
         item.setComissoes(BigDecimal.ZERO.setScale(2));
@@ -197,6 +211,35 @@ public class ItemFolhaPagamentoService {
         item.setComissoes(comissoes);
         item.setOutrosProventos(outrosProventos);
         item.setOutrosDescontos(outrosDescontos);
+
+        // Campos novos: se não vierem na requisição, mantém o valor atual.
+        if (request.getDiasFaltas() != null) {
+            if (request.getDiasFaltas() < 0 || request.getDiasFaltas() > 30) {
+                throw new IllegalArgumentException(
+                        "Os dias de falta devem ficar entre 0 e 30."
+                );
+            }
+
+            item.setDiasFaltas(request.getDiasFaltas());
+        }
+
+        if (request.getNumeroDependentes() != null) {
+            if (request.getNumeroDependentes() < 0
+                    || request.getNumeroDependentes() > 30) {
+                throw new IllegalArgumentException(
+                        "O número de dependentes deve ficar entre 0 e 30."
+                );
+            }
+
+            item.setNumeroDependentes(request.getNumeroDependentes());
+        }
+
+        if (request.getValeTransporte() != null) {
+            item.setValeTransporte(
+                    validarValor(request.getValeTransporte(),
+                            "Vale-transporte")
+            );
+        }
 
         calculoService.calcular(item);
 

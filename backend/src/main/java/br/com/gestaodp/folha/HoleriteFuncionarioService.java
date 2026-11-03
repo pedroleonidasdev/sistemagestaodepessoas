@@ -127,6 +127,17 @@ public class HoleriteFuncionarioService {
             descontos.setWidths(new float[]{3, 1.5f});
 
             adicionarLinha(descontos, "Descrição", "Valor", true);
+            if (item.getDescontoFaltas() != null
+                    && item.getDescontoFaltas().signum() > 0) {
+                adicionarLinha(descontos,
+                        "Faltas (" + item.getDiasFaltas() + " dia(s))",
+                        formatar(item.getDescontoFaltas()), false);
+            }
+            if (item.getDescontoValeTransporte() != null
+                    && item.getDescontoValeTransporte().signum() > 0) {
+                adicionarLinha(descontos, "Vale-transporte (até 6%)",
+                        formatar(item.getDescontoValeTransporte()), false);
+            }
             adicionarLinha(descontos, "INSS",
                     formatar(item.getValorInss()), false);
             adicionarLinha(descontos, "IRRF",
@@ -145,6 +156,8 @@ public class HoleriteFuncionarioService {
                     "Base de INSS: " + formatar(item.getBaseInss()), normal));
             documento.add(new Paragraph(
                     "Base de IRRF: " + formatar(item.getBaseIrrf()), normal));
+            documento.add(new Paragraph(
+                    "Dependentes (IRRF): " + item.getNumeroDependentes(), normal));
             documento.add(new Paragraph(
                     "FGTS (informativo): " + formatar(item.getValorFgts()), normal));
 

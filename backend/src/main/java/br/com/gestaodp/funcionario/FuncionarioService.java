@@ -87,6 +87,12 @@ public class FuncionarioService {
         funcionario.setNomeCompleto(dadosAtualizados.getNomeCompleto());
         funcionario.setCpf(dadosAtualizados.getCpf());
         funcionario.setSalarioBase(dadosAtualizados.getSalarioBase());
+        funcionario.setNumeroDependentes(
+                dadosAtualizados.getNumeroDependentes()
+        );
+        funcionario.setValeTransporteMensal(
+                dadosAtualizados.getValeTransporteMensal()
+        );
         funcionario.setDataAdmissao(dadosAtualizados.getDataAdmissao());
         funcionario.setSituacao(dadosAtualizados.getSituacao());
 

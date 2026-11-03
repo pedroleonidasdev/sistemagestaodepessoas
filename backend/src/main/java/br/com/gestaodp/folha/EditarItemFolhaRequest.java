@@ -9,6 +9,9 @@ public class EditarItemFolhaRequest {
     private BigDecimal comissoes;
     private BigDecimal outrosProventos;
     private BigDecimal outrosDescontos;
+    private Integer diasFaltas;
+    private Integer numeroDependentes;
+    private BigDecimal valeTransporte;
 
     public BigDecimal getHorasExtras() {
         return horasExtras;
@@ -48,5 +51,29 @@ public class EditarItemFolhaRequest {
 
     public void setOutrosDescontos(BigDecimal outrosDescontos) {
         this.outrosDescontos = outrosDescontos;
+    }
+
+    public Integer getDiasFaltas() {
+        return diasFaltas;
+    }
+
+    public void setDiasFaltas(Integer diasFaltas) {
+        this.diasFaltas = diasFaltas;
+    }
+
+    public Integer getNumeroDependentes() {
+        return numeroDependentes;
+    }
+
+    public void setNumeroDependentes(Integer numeroDependentes) {
+        this.numeroDependentes = numeroDependentes;
+    }
+
+    public BigDecimal getValeTransporte() {
+        return valeTransporte;
+    }
+
+    public void setValeTransporte(BigDecimal valeTransporte) {
+        this.valeTransporte = valeTransporte;
     }
 }

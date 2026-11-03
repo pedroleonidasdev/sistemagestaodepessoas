@@ -237,6 +237,9 @@ export function editarItemFolha(
         comissoes: dados.comissoes,
         outrosProventos: dados.outrosProventos,
         outrosDescontos: dados.outrosDescontos,
+        diasFaltas: dados.diasFaltas,
+        numeroDependentes: dados.numeroDependentes,
+        valeTransporte: dados.valeTransporte,
       }),
     }
   );
@@ -365,6 +368,8 @@ export function cadastrarFuncionario(dados, empresaId = 1) {
       nomeCompleto: dados.nomeCompleto,
       cpf: dados.cpf,
       salarioBase: Number(dados.salarioBase),
+      numeroDependentes: Number(dados.numeroDependentes ?? 0),
+      valeTransporteMensal: Number(dados.valeTransporteMensal || 0),
       dataAdmissao: dados.dataAdmissao,
       situacao: "ATIVO",
       departamento: dados.departamentoId
@@ -388,6 +393,8 @@ export function atualizarFuncionario(funcionarioId, dados, empresaId = 1) {
         nomeCompleto: dados.nomeCompleto,
         cpf: dados.cpf,
         salarioBase: Number(dados.salarioBase),
+        numeroDependentes: Number(dados.numeroDependentes ?? 0),
+        valeTransporteMensal: Number(dados.valeTransporteMensal || 0),
         dataAdmissao: dados.dataAdmissao,
         situacao: dados.situacao,
         departamento: dados.departamentoId

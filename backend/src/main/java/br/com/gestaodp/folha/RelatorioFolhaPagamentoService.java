@@ -87,17 +87,18 @@ private final NumberFormat moeda =
                             + "    Status: " + folha.getStatus(), normal));
             documento.add(new Paragraph(" "));
 
-            PdfPTable tabela = new PdfPTable(10);
+            PdfPTable tabela = new PdfPTable(11);
             tabela.setWidthPercentage(100);
             tabela.setWidths(new float[]{
-                    2.8f, 1.3f, 1.2f, 1.2f, 1.2f,
-                    1.2f, 1.2f, 1.2f, 1.2f, 1.4f
+                    2.6f, 1.3f, 1.1f, 1.1f, 1.1f,
+                    1.2f, 1.2f, 1.1f, 1.1f, 1.2f, 1.4f
             });
 
             String[] colunas = {
                     "Funcionário", "Salário-base", "Horas extras",
                     "Adicionais", "Comissões", "Outros proventos",
-                    "INSS", "IRRF", "Outros descontos", "Salário líquido"
+                    "Faltas e VT", "INSS", "IRRF", "Outros descontos",
+                    "Salário líquido"
             };
 
             for (String coluna : colunas) {
@@ -110,6 +111,7 @@ private final NumberFormat moeda =
             BigDecimal totalComissoes = BigDecimal.ZERO;
             BigDecimal totalOutrosProventos = BigDecimal.ZERO;
             BigDecimal totalProventos = BigDecimal.ZERO;
+            BigDecimal totalFaltasVt = BigDecimal.ZERO;
             BigDecimal totalInss = BigDecimal.ZERO;
             BigDecimal totalIrrf = BigDecimal.ZERO;
             BigDecimal totalOutrosDescontos = BigDecimal.ZERO;
@@ -125,6 +127,9 @@ private final NumberFormat moeda =
                 adicionarCelula(tabela, formatar(item.getAdicionais()), false);
                 adicionarCelula(tabela, formatar(item.getComissoes()), false);
                 adicionarCelula(tabela, formatar(item.getOutrosProventos()), false);
+                adicionarCelula(tabela, formatar(
+                        somar(item.getDescontoFaltas(),
+                                item.getDescontoValeTransporte())), false);
                 adicionarCelula(tabela, formatar(item.getValorInss()), false);
                 adicionarCelula(tabela, formatar(item.getValorIrrf()), false);
                 adicionarCelula(tabela, formatar(item.getOutrosDescontos()), false);
@@ -137,6 +142,9 @@ private final NumberFormat moeda =
                 totalOutrosProventos = somar(
                         totalOutrosProventos, item.getOutrosProventos());
                 totalProventos = somar(totalProventos, item.getTotalProventos());
+                totalFaltasVt = somar(totalFaltasVt,
+                        somar(item.getDescontoFaltas(),
+                                item.getDescontoValeTransporte()));
                 totalInss = somar(totalInss, item.getValorInss());
                 totalIrrf = somar(totalIrrf, item.getValorIrrf());
                 totalOutrosDescontos = somar(
@@ -162,6 +170,9 @@ private final NumberFormat moeda =
                             + formatar(totalOutrosProventos), normal));
             documento.add(new Paragraph(
                     "Total de proventos: " + formatar(totalProventos), normal));
+            documento.add(new Paragraph(
+                    "Total de faltas e vale-transporte: "
+                            + formatar(totalFaltasVt), normal));
             documento.add(new Paragraph(
                     "Total de INSS: " + formatar(totalInss), normal));
             documento.add(new Paragraph(

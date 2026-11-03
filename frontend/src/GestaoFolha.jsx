@@ -460,6 +460,9 @@ function GestaoFolha() {
       comissoes: numero(item.comissoes),
       outrosProventos: numero(item.outrosProventos),
       outrosDescontos: numero(item.outrosDescontos),
+      diasFaltas: Number(item.diasFaltas ?? 0),
+      numeroDependentes: Number(item.numeroDependentes ?? 0),
+      valeTransporte: numero(item.valeTransporte),
     });
     setErro("");
     setMensagem("");
@@ -478,6 +481,19 @@ function GestaoFolha() {
         setErro("Preencha todos os valores com números iguais ou maiores que zero.");
         return;
       }
+    }
+
+    const faltas = Number(formEdicao.diasFaltas);
+    const dependentes = Number(formEdicao.numeroDependentes);
+
+    if (!Number.isInteger(faltas) || faltas < 0 || faltas > 30) {
+      setErro("Os dias de falta devem ser um número inteiro de 0 a 30.");
+      return;
+    }
+
+    if (!Number.isInteger(dependentes) || dependentes < 0 || dependentes > 30) {
+      setErro("Os dependentes devem ser um número inteiro de 0 a 30.");
+      return;
     }
 
     setProcessando(true);
@@ -1166,7 +1182,7 @@ function GestaoFolha() {
           <div className="gf-panel-heading">
             <div>
               <h3>Editar lançamentos</h3>
-              <p>Informe valores não negativos. O backend recalcula os totais.</p>
+              <p>Informe valores não negativos. O vale-transporte desconta até 6% do salário-base e cada falta desconta 1/30 do salário. O backend recalcula os totais.</p>
             </div>
             <button
               type="button"
@@ -1185,14 +1201,17 @@ function GestaoFolha() {
               ["comissoes", "Comissões (R$)"],
               ["outrosProventos", "Outros proventos (R$)"],
               ["outrosDescontos", "Outros descontos (R$)"],
-            ].map(([campo, rotulo]) => (
+              ["valeTransporte", "Vale-transporte do mês (R$)"],
+              ["diasFaltas", "Dias de falta", "1"],
+              ["numeroDependentes", "Dependentes (IRRF)", "1"],
+            ].map(([campo, rotulo, passo]) => (
               <label className="gf-edit-field" key={campo}>
                 <span className="gf-label">{rotulo}</span>
                 <input
                   className="gf-input"
                   type="number"
                   min="0"
-                  step="0.01"
+                  step={passo ?? "0.01"}
                   value={formEdicao[campo] ?? ""}
                   onChange={(event) => setFormEdicao((atual) => ({
                     ...atual,

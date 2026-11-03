@@ -72,6 +72,17 @@ public class Funcionario {
     )
     private BigDecimal salarioBase = BigDecimal.ZERO;
 
+    @Column(name = "numero_dependentes", nullable = false)
+    private Integer numeroDependentes = 0;
+
+    @Column(
+        name = "vale_transporte_mensal",
+        nullable = false,
+        precision = 12,
+        scale = 2
+    )
+    private BigDecimal valeTransporteMensal = BigDecimal.ZERO;
+
     @Column(name = "data_admissao", nullable = false)
     private LocalDate dataAdmissao;
 
@@ -161,6 +172,47 @@ public class Funcionario {
         }
 
         this.salarioBase = salarioBase.setScale(
+            2,
+            RoundingMode.HALF_UP
+        );
+    }
+
+    public Integer getNumeroDependentes() {
+        return numeroDependentes;
+    }
+
+    public void setNumeroDependentes(Integer numeroDependentes) {
+        if (numeroDependentes == null) {
+            this.numeroDependentes = 0;
+            return;
+        }
+
+        if (numeroDependentes < 0 || numeroDependentes > 30) {
+            throw new IllegalArgumentException(
+                "O número de dependentes deve ficar entre 0 e 30."
+            );
+        }
+
+        this.numeroDependentes = numeroDependentes;
+    }
+
+    public BigDecimal getValeTransporteMensal() {
+        return valeTransporteMensal;
+    }
+
+    public void setValeTransporteMensal(BigDecimal valeTransporteMensal) {
+        if (valeTransporteMensal == null) {
+            this.valeTransporteMensal = BigDecimal.ZERO.setScale(2);
+            return;
+        }
+
+        if (valeTransporteMensal.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException(
+                "O valor do vale-transporte não pode ser negativo."
+            );
+        }
+
+        this.valeTransporteMensal = valeTransporteMensal.setScale(
             2,
             RoundingMode.HALF_UP
         );

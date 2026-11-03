@@ -16,6 +16,8 @@ public record FuncionarioResponse(
         String nomeCompleto,
         String cpf,
         BigDecimal salarioBase,
+        Integer numeroDependentes,
+        BigDecimal valeTransporteMensal,
         LocalDate dataAdmissao,
         SituacaoFuncionario situacao,
         Long departamentoId,
@@ -34,6 +36,8 @@ public record FuncionarioResponse(
                 funcionario.getNomeCompleto(),
                 funcionario.getCpf(),
                 funcionario.getSalarioBase(),
+                funcionario.getNumeroDependentes(),
+                funcionario.getValeTransporteMensal(),
                 funcionario.getDataAdmissao(),
                 funcionario.getSituacao(),
                 funcionario.getDepartamento() != null

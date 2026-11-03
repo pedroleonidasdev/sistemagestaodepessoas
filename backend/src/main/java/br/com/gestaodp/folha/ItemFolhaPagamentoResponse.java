@@ -24,6 +24,12 @@ public class ItemFolhaPagamentoResponse {
     private BigDecimal valorIrrf;
     private BigDecimal valorFgts;
 
+    private Integer numeroDependentes;
+    private BigDecimal valeTransporte;
+    private Integer diasFaltas;
+    private BigDecimal descontoFaltas;
+    private BigDecimal descontoValeTransporte;
+
     private BigDecimal outrosDescontos;
     private BigDecimal totalDescontos;
     private BigDecimal salarioLiquido;
@@ -48,6 +54,12 @@ public class ItemFolhaPagamentoResponse {
         this.valorIrrf = item.getValorIrrf();
         this.valorFgts = item.getValorFgts();
 
+        this.numeroDependentes = item.getNumeroDependentes();
+        this.valeTransporte = item.getValeTransporte();
+        this.diasFaltas = item.getDiasFaltas();
+        this.descontoFaltas = item.getDescontoFaltas();
+        this.descontoValeTransporte = item.getDescontoValeTransporte();
+
         this.outrosDescontos = item.getOutrosDescontos();
         this.totalDescontos = item.getTotalDescontos();
         this.salarioLiquido = item.getSalarioLiquido();
@@ -71,6 +83,12 @@ public class ItemFolhaPagamentoResponse {
     public BigDecimal getBaseIrrf() { return baseIrrf; }
     public BigDecimal getValorIrrf() { return valorIrrf; }
     public BigDecimal getValorFgts() { return valorFgts; }
+
+    public Integer getNumeroDependentes() { return numeroDependentes; }
+    public BigDecimal getValeTransporte() { return valeTransporte; }
+    public Integer getDiasFaltas() { return diasFaltas; }
+    public BigDecimal getDescontoFaltas() { return descontoFaltas; }
+    public BigDecimal getDescontoValeTransporte() { return descontoValeTransporte; }
 
     public BigDecimal getOutrosDescontos() { return outrosDescontos; }
     public BigDecimal getTotalDescontos() { return totalDescontos; }

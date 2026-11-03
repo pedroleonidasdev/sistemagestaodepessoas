@@ -46,6 +46,21 @@ public class ItemFolhaPagamento {
     @Column(name = "outros_descontos", nullable = false, precision = 12, scale = 2)
     private BigDecimal outrosDescontos = BigDecimal.ZERO;
 
+    @Column(name = "numero_dependentes", nullable = false)
+    private Integer numeroDependentes = 0;
+
+    @Column(name = "vale_transporte", nullable = false, precision = 12, scale = 2)
+    private BigDecimal valeTransporte = BigDecimal.ZERO;
+
+    @Column(name = "dias_faltas", nullable = false)
+    private Integer diasFaltas = 0;
+
+    @Column(name = "desconto_faltas", nullable = false, precision = 12, scale = 2)
+    private BigDecimal descontoFaltas = BigDecimal.ZERO;
+
+    @Column(name = "desconto_vale_transporte", nullable = false, precision = 12, scale = 2)
+    private BigDecimal descontoValeTransporte = BigDecimal.ZERO;
+
     @Column(name = "total_proventos", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalProventos = BigDecimal.ZERO;
 
@@ -105,4 +120,15 @@ public class ItemFolhaPagamento {
     public void setTotalDescontos(BigDecimal v) { this.totalDescontos = v; }
     public BigDecimal getSalarioLiquido() { return salarioLiquido; }
     public void setSalarioLiquido(BigDecimal v) { this.salarioLiquido = v; }
+
+    public Integer getNumeroDependentes() { return numeroDependentes; }
+    public void setNumeroDependentes(Integer v) { this.numeroDependentes = v; }
+    public BigDecimal getValeTransporte() { return valeTransporte; }
+    public void setValeTransporte(BigDecimal v) { this.valeTransporte = v; }
+    public Integer getDiasFaltas() { return diasFaltas; }
+    public void setDiasFaltas(Integer v) { this.diasFaltas = v; }
+    public BigDecimal getDescontoFaltas() { return descontoFaltas; }
+    public void setDescontoFaltas(BigDecimal v) { this.descontoFaltas = v; }
+    public BigDecimal getDescontoValeTransporte() { return descontoValeTransporte; }
+    public void setDescontoValeTransporte(BigDecimal v) { this.descontoValeTransporte = v; }
 }

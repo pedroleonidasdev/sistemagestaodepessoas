@@ -44,6 +44,8 @@ const FORM_VAZIO = {
   situacao: "ATIVO",
   departamentoId: "",
   cargoId: "",
+  numeroDependentes: "0",
+  valeTransporteMensal: "",
 };
 
 /** Opções ativas, mais a atual do funcionário mesmo que esteja inativa. */
@@ -145,6 +147,11 @@ function Funcionarios() {
       situacao: funcionario.situacao ?? "ATIVO",
       departamentoId: String(funcionario.departamentoId ?? ""),
       cargoId: String(funcionario.cargoId ?? ""),
+      numeroDependentes: String(funcionario.numeroDependentes ?? 0),
+      valeTransporteMensal:
+        Number(funcionario.valeTransporteMensal) > 0
+          ? String(funcionario.valeTransporteMensal)
+          : "",
     });
     setErro("");
     setMensagem("");
@@ -175,6 +182,8 @@ function Funcionarios() {
         ? Number(form.departamentoId)
         : null,
       cargoId: form.cargoId ? Number(form.cargoId) : null,
+      numeroDependentes: Number(form.numeroDependentes || 0),
+      valeTransporteMensal: String(form.valeTransporteMensal).replace(",", "."),
     };
 
     if (!dados.matricula || !dados.nomeCompleto) {
@@ -193,6 +202,24 @@ function Funcionarios() {
       Number(dados.salarioBase) < 0
     ) {
       setErro("Informe um salário base igual ou maior que zero.");
+      return;
+    }
+
+    if (
+      !Number.isInteger(dados.numeroDependentes) ||
+      dados.numeroDependentes < 0 ||
+      dados.numeroDependentes > 30
+    ) {
+      setErro("Informe o número de dependentes, de 0 a 30.");
+      return;
+    }
+
+    if (
+      dados.valeTransporteMensal !== "" &&
+      (!Number.isFinite(Number(dados.valeTransporteMensal)) ||
+        Number(dados.valeTransporteMensal) < 0)
+    ) {
+      setErro("Informe um vale-transporte igual ou maior que zero.");
       return;
     }
 
@@ -420,6 +447,44 @@ function Funcionarios() {
                   onChange={(e) => alterarCampo("dataAdmissao", e.target.value)}
                   disabled={processando}
                   required
+                />
+              </div>
+
+              <div className="gf-form-field">
+                <label className="gf-label" htmlFor="fn-dependentes">
+                  Dependentes (IRRF)
+                </label>
+                <input
+                  id="fn-dependentes"
+                  className="gf-input"
+                  type="number"
+                  min="0"
+                  max="30"
+                  step="1"
+                  value={form.numeroDependentes}
+                  onChange={(e) =>
+                    alterarCampo("numeroDependentes", e.target.value)
+                  }
+                  disabled={processando}
+                />
+              </div>
+
+              <div className="gf-form-field">
+                <label className="gf-label" htmlFor="fn-vt">
+                  Vale-transporte mensal (R$)
+                </label>
+                <input
+                  id="fn-vt"
+                  className="gf-input"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="0,00 se não recebe"
+                  value={form.valeTransporteMensal}
+                  onChange={(e) =>
+                    alterarCampo("valeTransporteMensal", e.target.value)
+                  }
+                  disabled={processando}
                 />
               </div>
 

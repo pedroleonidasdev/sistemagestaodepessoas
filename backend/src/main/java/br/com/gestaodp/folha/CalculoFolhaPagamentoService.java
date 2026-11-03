@@ -20,6 +20,10 @@ public class CalculoFolhaPagamentoService {
         return dinheiro(base.multiply(new BigDecimal(taxa)));
     }
 
+    // Dedução do IRRF por dependente (valor mensal).
+    private static final BigDecimal DEDUCAO_POR_DEPENDENTE =
+            new BigDecimal("189.59");
+
     public void calcular(ItemFolhaPagamento item) {
 
         BigDecimal salario = dinheiro(item.getSalarioBase());
@@ -29,34 +33,68 @@ public class CalculoFolhaPagamentoService {
         BigDecimal outrosProventos = dinheiro(item.getOutrosProventos());
         BigDecimal outrosDescontos = dinheiro(item.getOutrosDescontos());
 
+        int diasFaltas = item.getDiasFaltas() == null
+                ? 0
+                : item.getDiasFaltas();
+
+        int dependentes = item.getNumeroDependentes() == null
+                ? 0
+                : item.getNumeroDependentes();
+
+        BigDecimal valeTransporte = item.getValeTransporte() == null
+                ? ZERO
+                : dinheiro(item.getValeTransporte());
+
         BigDecimal bruto = salario
                 .add(horasExtras)
                 .add(adicionais)
                 .add(comissoes)
                 .add(outrosProventos);
 
-        BigDecimal inss = calcularInss(bruto);
+        // Falta injustificada: desconto de 1/30 do salário por dia.
+        BigDecimal descontoFaltas = dinheiro(
+                salario.multiply(new BigDecimal(diasFaltas))
+                        .divide(new BigDecimal("30"), 10, RoundingMode.HALF_UP)
+        ).min(salario);
 
-        // Desconto simplificado mensal utilizado no cálculo do IRRF.
+        // INSS, IRRF e FGTS incidem sobre a remuneração após as faltas.
+        BigDecimal remuneracao = bruto.subtract(descontoFaltas).max(ZERO);
+
+        // Vale-transporte: 6% do salário-base, limitado ao custo do benefício.
+        BigDecimal descontoVt = valeTransporte.signum() > 0
+                ? valeTransporte.min(percentual(salario, "0.06"))
+                : ZERO;
+
+        BigDecimal inss = calcularInss(remuneracao);
+
+        // Usa a dedução mais vantajosa: legal (INSS + dependentes)
+        // ou o desconto simplificado mensal.
         BigDecimal descontoSimplificado = new BigDecimal("607.20");
-        BigDecimal deducaoIrrf = inss.max(descontoSimplificado);
+        BigDecimal deducaoLegal = inss.add(
+                DEDUCAO_POR_DEPENDENTE.multiply(new BigDecimal(dependentes))
+        );
+        BigDecimal deducaoIrrf = deducaoLegal.max(descontoSimplificado);
 
         BigDecimal baseIrrf =
-                bruto.subtract(deducaoIrrf).max(ZERO);
+                remuneracao.subtract(deducaoIrrf).max(ZERO);
 
-        BigDecimal irrf = calcularIrrf(bruto, baseIrrf);
+        BigDecimal irrf = calcularIrrf(remuneracao, baseIrrf);
 
         // FGTS informativo: não é descontado do salário do empregado.
-        BigDecimal fgts = percentual(bruto, "0.08");
+        BigDecimal fgts = percentual(remuneracao, "0.08");
 
-        BigDecimal descontos = inss
+        BigDecimal descontos = descontoFaltas
+                .add(descontoVt)
+                .add(inss)
                 .add(irrf)
                 .add(outrosDescontos);
 
         BigDecimal liquido = bruto.subtract(descontos);
 
         item.setTotalProventos(dinheiro(bruto));
-        item.setBaseInss(dinheiro(bruto));
+        item.setDescontoFaltas(dinheiro(descontoFaltas));
+        item.setDescontoValeTransporte(dinheiro(descontoVt));
+        item.setBaseInss(dinheiro(remuneracao));
         item.setValorInss(inss);
         item.setBaseIrrf(dinheiro(baseIrrf));
         item.setValorIrrf(irrf);
